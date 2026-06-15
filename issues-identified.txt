@@ -1,0 +1,101 @@
+ISSUES IDENTIFIED - Task MAnagement Application
+================================================
+Files Reviewed: app.js, dom.js, utils.js, app.test.js, index.html, styles.css
+Total Issues Found: 61 (54 core JS + 7 additional CSS)
+
+
+
+================================================
+app.js - Errors Found (32 errors)
+================================================
+
+
+1. `taskList` declared without `let` or `const`
+2. `var taskCounter` should be `let`
+3. `var newTask` inside `addTask()` should be `const`
+4. Multiple `var` declarations throughout, should be replaced with `let`/`const`
+5. Loose `==` operaot in `findTaskByTitle`, it should be `=== `
+6. Assignment `=` instead of `===` in `updateTaskPriority`
+7. `for (var i = 0; i <= taskList.length; i++)` has a off-by-one-error, uses `<=` instead of `<`
+8. `findTaskByTitle` use a `while` loop instead of a `for-of` loop.
+9. Infinite loop in `findTaskByTitle`, it is missing the `i++`
+10. `mergeTasks` uses manual loops instead of a spread operator
+11. `countCompletedTasks` missing a base case to stop the recursive call
+12. No null/undefined guard before recursion in `countCompletedTasks`
+13. `findTaskByTitle` missing its function parameter entirely
+14. `getTaskDetails` uses manual property copying instead of destructuring
+15. No pure functions anywhere in the file, project requires a minimum of 3.
+16. No array methods anywhere in the file, a minimum of 5 is required for the project
+17. No higher-order function, the project requires atleast 1
+18. No rest parameter used anywhere, the project requires atleast 1
+19. Task constructor is missing the `id` property
+20. Task class missing `toggleCompletion()` method
+21. `getInfo()` uses string concatenation instead of template literals
+22. `SubTask` calls `this` before `super()`
+23. `TaskManager` missing required additional methods.
+24. `TaskManager.tasks` aliases `taskList` become stale if reassigned @&@&@&@&&@&@@&@&@&@&@&@&&@&@@&&@&@@&@&@&
+25. No template literals anywhere, project requires a minimum of 5
+26. No array destructuring demonstrated - project requires a minimum of 1
+27. No spread operator in `mergeTasks` 
+28. No ES6 module exports anywhere - A minimum of 3 is required for the project *************************
+29. No input validation in `addTask`
+30. No typeof check in `updateTaskPriority` - A minimum of the is required across the project
+31. No empty array guard in `calculateAveragePriority`
+32. No try-catch blocks anywhere - A minimum of 3 is required throughout the project
+
+
+================================================
+dom.js - Errors Found (8 errors)
+================================================
+
+33. `getElementById(".add-task-btn")` passed a class string
+34. `querySelector("task-input") is missing `#`
+35. No null checks before `addEventListener`
+36. `setUpEventListeners()` called before the DOM loads so all selector fail
+37. Missing `event.preventDefault(), so page reloads and wipes all tasks
+38. No event delegation for dynamically added buttons.
+39. String concatenation in `innerHTML` instead of template literals
+40. Inputs not cleared after a task is added
+
+================================================
+utilis.js - Errors Found (7 errors)
+================================================
+
+41. `var priorities` should be declared with `const`
+42. Loose `==` operator in `isHighPriority` should be `===`
+43. `saveToStorage is missing `JSON.stringify, so it stores [object Object]
+44. `loadFromStorage` is missing `JSON.parse, so it return an unusable string
+45. `Math.random() used for IDs returns decimals and not intergers
+46. `isHighPriority` return `"yes"`/`"no"` strings instead of booleans
+47. No module exports so nothing is accessible to other Files
+
+================================================
+app.test.js - Errors Found (4 errors)
+================================================
+
+48. No imports so every test throws a ReferenceError before running
+49. `var` used in test declarations instead of const
+50. No `beforeEach` to reset state 
+51. Only 2 partial test exist and a minimum 13 is required for the project.
+
+================================================
+index.html - Errors Found (33 errors)
+================================================
+
+52. `dom.js` loads before `app.js` so the functions are called before they exist
+53. Priority input missing from the form entirely
+54. Script tags missinf `type="module"` for ES6 imports
+
+================================================
+styles.css - Errors Found (7 errors) - 
+These are in addition to the Javascripts errors found
+================================================
+
+55. `#app` selector doesn't match HTML, it should `.container`
+56. `.task-form` selector does not match HTML it should be `.add-task-section`
+57. `.stats` selector does not match HTML, it should be `.statistics`
+58. No `.completed` style, so no visual feedback when the task is toggled
+59. No styles for delete/complete buttons inside task cards
+60. No styles for the priority dropdown input
+61. No styles for statistics content items
+

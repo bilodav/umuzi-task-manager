@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="styles1.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Task Management System</h1>
+
+      <div class="add-task-section">
+        <h2>Add New Task</h2>
+        <!-- Form with issues -->
+        <div>
+          <input type="text" id="title" placeholder="Task Title" />
+          <input type="text" id="description" placeholder="Description" />
+          <select id="priority"></select>
+          <button class="add-task-btn">Add Task</button>
+        </div>
+      </div>
+      <div class="task-list" id="task-list">
+        <!-- Tasks will be displayed here -->
+      </div>
+
+      <div class="statistics">
+        <!-- Added: statistics display -->
+      </div>
+    </div>
+
+    <!-- Scripts loaded now in the right order-->
+    <script src="./src/utils.js"></script>
+    <script type="module" src="./src/app.js"></script>
+    <script type="module" src="./src/dom.js"></script>
+    <!-- Added utils.js module script -->
+  </body>
+</html>
