@@ -1,4 +1,9 @@
-import { taskList, TaskManager, countCompletedTasks } from "./app.js";
+import {
+  taskList,
+  TaskManager,
+  countCompletedTasks,
+  loadTasks,
+} from "./app.js";
 import { formatTaskName, priorities } from "./utils.js";
 // DOM Manipulation - Starter Code with Errors
 
