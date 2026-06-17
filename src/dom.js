@@ -11,6 +11,7 @@ import { formatTaskName, priorities } from "./utils.js";
 function setupEventListeners() {
   console.log("LOADED THE DOM");
   loadTasks();
+  displayTasks();
   // Corrected selector method
   const addButton = document.querySelector(".add-task-btn"); // Changed to querySelector
   const taskInput = document.querySelector("#task-input"); // Added # ************************* DOES NOT EXIT IN DOM
