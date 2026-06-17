@@ -1,5 +1,5 @@
-import { taskList, TaskManager } from "./app.js";
-
+import { taskList, TaskManager, countCompletedTasks } from "./app.js";
+import { formatTaskName, priorities } from "./utils.js";
 // DOM Manipulation - Starter Code with Errors
 
 // Added the proper DOM selectors
@@ -110,18 +110,24 @@ function displayTasks() {
         </div>
         <p> ${taskList[i].description}</p>
         <div class="task-card-status">
-        <p class="${taskList[i].completed ? "green" : null}"> <span>Status:</span> ${taskList[i].completed ? "Done" : "Still Busy"}</p>
-        <p class="priority-${taskList[i].priority}"> 
-        <span>Priority:</span> ${formatTaskName(taskList[i].priority)} 
-        <span class="change-status-btn" title="Change Status">⌄</span>
-        </p>
-        <div class="task-card-modal-select hidden ">
-          <ol>
-          <li data-id=${taskList[i].id} data-value="low">Low</li>
-          <li data-id=${taskList[i].id} data-value="medium">Medium</li>
-          <li data-id=${taskList[i].id} data-value="high">High</li>
-          </ol>
-        </div>
+          <p class="${taskList[i].completed ? "green" : null}"> 
+          <span>Status:</span> ${taskList[i].completed ? "Done" : "Still Busy"}
+          </p>
+          <div class="priority-status-wrapper">
+            <p class="priority-${taskList[i].priority}"> 
+            <span>Priority:</span> ${formatTaskName(taskList[i].priority)} 
+            </p>
+            <div class="status-btn-wrapper">
+              <span class="change-status-btn" title="Change Status">⌄</span>
+              <div class="task-card-modal-select hidden ">
+                <ol>
+                  <li data-id=${taskList[i].id} data-value="low">Low</li>
+                  <li data-id=${taskList[i].id} data-value="medium">Medium</li>
+                  <li data-id=${taskList[i].id} data-value="high">High</li>
+                </ol>
+              </div>
+            </div>
+          </div>
         </div>
         <div>
         <button class="${taskList[i].completed ? "active" : "non"}-completed-btn completed-btn" data-id=${taskList[i].id}>${taskList[i].completed ? "Mark as not done" : "Mark as Done"}</button> 
@@ -146,7 +152,7 @@ function displayTasks() {
     </div>
     <div class="stat-card">
       <p>Total Tasks Completed :</p>
-      <p>${TaskManager.getTotalCompletedTasks()}</p>
+      <p>${countCompletedTasks(taskList, 0)}</p>
     </div>
     <div class="stat-card">
       <p>Total Tasks Remaining :</p>
@@ -166,7 +172,7 @@ function displayTasks() {
       </fieldset>   
       <fieldset>
         <label>Filter By: </label>
-        <select id="fillter-by">
+        <select id="filter-by">
           <option default value="all">All</option>
           <option value="high-priority">Highest Priority</option>
           <option value="medium-priority">Medium Priority</option>
@@ -225,7 +231,7 @@ function handleTaskClick(event) {
 
   // Check to see if status button is clicked, and then toggle hidden class the next sibling on the parent element
   if (event.target.classList.contains("change-status-btn")) {
-    event.target.parentElement.nextElementSibling.classList.toggle("hidden");
+    event.target.nextElementSibling.classList.toggle("hidden");
   }
 
   // Check if I am clicking the li element in my modal

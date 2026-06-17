@@ -1,18 +1,18 @@
 // Utilities - Starter Code (WITH ERRORS AND MISSING FEATURES)
 
 // Bug: Not using proper data structures
-const priorities = ["low", "medium", "high"];
+export const priorities = ["low", "medium", "high"];
 
 // Bug: Missing JSON operations
-function saveToStorage(data) {
-  // Bug: Not converting to JSON
-  localStorage.setItem("tasks", data);
+export function saveToStorage(data) {
+  // Fixed now converting to JSON
+  localStorage.setItem("tasks", JSON.stringify(data));
 }
 
-function loadFromStorage() {
-  // Bug: Not parsing JSON
-  var data = localStorage.getItem("tasks");
-  return data;
+export function loadFromStorage() {
+  // Fixed now parsing JSON
+  const data = localStorage.getItem("tasks");
+  return data ? JSON.parse(data) : []; // if data is available in storage parse it, if not use an empty array so as to not break the app
 }
 
 // Bug: Incorrect Math object usage
@@ -21,24 +21,24 @@ function loadFromStorage() {
 // }
 // Better way for edge cases where app gets bigger than the fixed amount or getting the same random number twice
 
-function generateRandomId() {
+export function generateRandomId() {
   return Date.now();
 }
 
 // Bug: Poor string manipulation
-function formatTaskName(name) {
+export function formatTaskName(name) {
   // Fixed Bug: string methods used properly
   const result = name.trim().charAt(0).toUpperCase() + name.trim().slice(1);
   return result; // Now Capitalizes, trim, etc.
 }
 
 // Bug: Incorrect boolean logic
-function isHighPriority(task) {
-  if (task.priority == "high") {
-    // Bug: Using ==
-    return "yes"; // Bug: Should return boolean
+export function isHighPriority(task) {
+  if (task.priority === "high") {
+    // Fixed now Using ===
+    return true; // Fixed now returns boolean
   }
-  return "no";
+  return false;
 }
 
 // Missing: Class definitions

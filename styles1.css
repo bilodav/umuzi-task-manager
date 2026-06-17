@@ -192,6 +192,7 @@ html {
   --border-accent: #c9a961;
   --border-completed: #61c974;
   --border-low-priority: #2a323f;
+  --border-medium-priority: #e6962d;
   --border-high-priority: #c96161;
   --border-accent: #c9a961;
   --border-accent: #c9a961;
@@ -204,6 +205,7 @@ html {
   --shadow-xl: 0 20px 40px rgba(26, 35, 50, 0.25);
   --shadow-accent: 0 4px 12px rgba(201, 169, 97, 0.3);
   --shadow-low-priority: 0 8px 20px rgba(26, 35, 50, 0.225);
+  --shadow-medium-priority: 0 4px 12px rgba(185, 97, 4, 0.3);
   --shadow-high-priority: 0 4px 12px rgba(123, 33, 17, 0.3);
   --shadow-completed: 0 4px 12px rgba(33, 123, 17, 0.3);
   --shadow-inset:
@@ -408,8 +410,6 @@ body {
 }
 
 .change-status-btn {
-  width: 48px;
-  height: 48px;
   background-color: var(--btn-secondary-bg);
   border-radius: var(--radius-sm);
   color: var(--btn-secondary-text);
@@ -554,8 +554,8 @@ select:focus {
 }
 
 .task-card-medium {
-  border: 1px solid var(--border-accent);
-  box-shadow: var(--shadow-accent);
+  border: 1px solid var(--border-medium-priority);
+  box-shadow: var(--shadow-medium-priority);
 }
 
 .task-card-high {
@@ -590,11 +590,17 @@ select:focus {
   font-weight: var(--font-weight-semibold);
 }
 
+.status-btn-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 0 0 0 5px;
+}
+
 .task-card-modal-select {
   width: auto;
   position: absolute;
-  left: 85%;
-  top: 58%;
+  top: 100%;
+  right: 20%;
   background-color: var(--bg-primary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
@@ -658,6 +664,22 @@ select:focus {
   gap: 20px;
   width: 85%;
   margin: 10px auto;
+}
+
+.filter-task-section fieldset {
+  width: 85%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.filter-task-section label {
+  font-weight: var(--font-weight-semibold);
+  font-size: 0.85rem;
+}
+
+.filter-task-section select {
+  min-width: 30%;
+  width: 80%;
 }
 
 .priority-medium {

@@ -1,11 +1,13 @@
 // Task Management Application - Starter Code with Errors
 
+import { generateRandomId, loadFromStorage, saveToStorage } from "./utils.js";
+
 // Global variables
 export const taskList = []; // Added const as it will always be an array
 let taskCounter = 0; // Used let
 
 // Task class with errors
-class Task {
+export class Task {
   constructor(title, description, priority) {
     this.title = title;
     this.description = description;
@@ -22,6 +24,7 @@ class Task {
   // Added method to toggle completion
   setCompleted() {
     this.completed = !this.completed;
+    saveToStorage(taskList);
   }
 }
 
@@ -91,6 +94,17 @@ function findTaskByTitle() {
 //   return false;
 // }
 
+// This is used in dom.js on load to restore saved tasks
+export function loadTasks() {
+  const savedTasks = loadFromStorage();
+  savedTasks.forEach((item) => {
+    const task = new Task(item.title, item.description, item.priority); // convert back to task instances from the plain JS objects
+    task.id = item.id; // set ID to old ID as opposed to generating a new one
+    task.completed = item.completed;
+    taskList.push(task);
+  });
+}
+
 // Function that should use destructuring but doesn't
 function getTaskDetails(task) {
   // Should destructure task properties
@@ -121,9 +135,10 @@ function mergeTasks(list1, list2) {
 }
 
 // Recursive function with error
-function countCompletedTasks(tasks, index) {
-  // Missing: base case check
+export function countCompletedTasks(tasks, index) {
+  // Added base case check
   // Missing: null/undefined check
+  if (index === tasks.length) return 0;
 
   if (tasks[index].completed) {
     return 1 + countCompletedTasks(tasks, index + 1);
@@ -166,6 +181,7 @@ export const TaskManager = {
     const newTask = new Task(title, description, priority); // changed to const
     this.tasks.push(newTask);
     taskCounter++;
+    saveToStorage(this.tasks);
     console.log(taskCounter);
 
     return newTask;
@@ -179,6 +195,7 @@ export const TaskManager = {
     // Delete the index from the array using the splice method to mutate the original array
     this.tasks.splice(taskIndex, 1);
     taskCounter--;
+    saveToStorage(this.tasks);
     console.log(taskCounter);
   },
 
@@ -190,6 +207,7 @@ export const TaskManager = {
       if (this.tasks[i].id === Number(taskId)) {
         // Operator fixed (=== instead of =)
         this.tasks[i].priority = newPriority;
+        saveToStorage(this.tasks);
         return true;
       }
     }
@@ -203,6 +221,18 @@ export const TaskManager = {
   getTotalCompletedTasks() {
     const completedList = this.tasks.filter((task) => task.completed === true);
     return completedList.length;
+  },
+  //Added count COmpleted tasks here in the taskManager too, waiting on clarification I think its better here, ensuring it can call itself
+  countCompletedTasks(index = 0) {
+    // Added base case check
+    // Missing: null/undefined check
+    if (index === this.tasks.length) return 0;
+
+    if (this.tasks[index].completed) {
+      return 1 + this.countCompletedTasks(index + 1);
+    } else {
+      return this.countCompletedTasks(index + 1);
+    }
   },
 
   getTotalIncompleteTasks() {
