@@ -18,7 +18,7 @@ export class Task {
 
   getInfo() {
     // return now using template literals
-    return `Task: ${this.title} - Priority:  ${this.priority}`;
+    return `Task: ${this.title} - Priority: ${this.priority}`;
   }
 
   // Added method to toggle completion
@@ -54,12 +54,11 @@ class SubTask extends Task {
 
 // Added the function to TaskMAnger as central place to manage the tasks
 
-// Function with incorrect loop
-function displayAllTasks() {
-  // Wrong loop - should use for-of
-  for (var i = 0; i <= taskList.length; i++) {
-    // Off-by-one error
-    console.log(taskList[i].title);
+// Used correct Loop *** can this be something more useful that printing the title to the console?
+export function displayAllTasks() {
+  // Used for..of loop and of by one error automattically gone
+  for (let task of taskList) {
+    console.log(task.title);
   }
 }
 
