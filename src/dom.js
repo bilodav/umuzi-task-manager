@@ -57,6 +57,18 @@ function setupEventListeners() {
     });
   });
 
+  document.addEventListener("change", (event) => {
+    if (event.target.id === "filter-by") {
+      currentFilter = event.target.value;
+      displayTasks();
+    }
+
+    if (event.target.id === "sort-by") {
+      currentSort = event.target.value;
+      displayTasks();
+    }
+  });
+
   // Missing: other event listeners for form submission, etc. ************************************** DOES this form need to be here
 }
 
@@ -86,6 +98,9 @@ function handleAddTask() {
   prioritySelect.value = "low";
 }
 
+let currentFilter = "all";
+let currentSort = "order-added";
+
 // Function that should use better selectors
 function displayTasks() {
   const taskListContainer = document.getElementById("task-list");
@@ -99,37 +114,34 @@ function displayTasks() {
   taskListContainer.innerHTML = ``;
   statisticsContainer.innerHTML = ``;
 
-  // Inefficient - should use template literals and insertAdjacentHTML ***********MAybe Gonna use a foreach here?
-  for (let i = 0; i < taskList.length; i++) {
-    // const div = document.createElement("div");
-    // div.innerHTML = `<h3> ${taskList[i].title} </h3>`;
-    // div.innerHTML = div.innerHTML + "<p>" + taskList[i].description + "</p>";
-    // container.appendChild(div);
+  const tasksToRender = TaskManager.getDisplayTasks(currentFilter, currentSort);
 
+  // Inefficient - should use template literals and insertAdjacentHTML ***********MAybe Gonna use a foreach / for of  here?
+  for (let i = 0; i < tasksToRender.length; i++) {
     taskListContainer.insertAdjacentHTML(
       "beforeend",
       `
-      <div class="task-card task-card-${taskList[i].completed ? "completed" : taskList[i].priority}">
+      <div class="task-card task-card-${tasksToRender[i].completed ? "completed" : tasksToRender[i].priority}">
         <div class="task-card-heading">
-        <h3> ${taskList[i].title}</h3>
-        <p>ID: ${taskList[i].id} </p>
+        <h3> ${tasksToRender[i].title}</h3>
+        <p>ID: ${tasksToRender[i].id} </p>
         </div>
-        <p> ${taskList[i].description}</p>
+        <p> ${tasksToRender[i].description}</p>
         <div class="task-card-status">
-          <p class="${taskList[i].completed ? "green" : null}"> 
-          <span>Status:</span> ${taskList[i].completed ? "Done" : "Still Busy"}
+          <p class="${tasksToRender[i].completed ? "green" : null}"> 
+          <span>Status:</span> ${tasksToRender[i].completed ? "Done" : "Still Busy"}
           </p>
           <div class="priority-status-wrapper">
-            <p class="priority-${taskList[i].priority}"> 
-            <span>Priority:</span> ${formatTaskName(taskList[i].priority)} 
+            <p class="priority-${tasksToRender[i].priority}"> 
+            <span>Priority:</span> ${formatTaskName(tasksToRender[i].priority)} 
             </p>
             <div class="status-btn-wrapper">
               <span class="change-status-btn" title="Change Status">⌄</span>
               <div class="task-card-modal-select hidden ">
                 <ol>
-                  <li data-id=${taskList[i].id} data-value="low">Low</li>
-                  <li data-id=${taskList[i].id} data-value="medium">Medium</li>
-                  <li data-id=${taskList[i].id} data-value="high">High</li>
+                  <li data-id=${tasksToRender[i].id} data-value="low">Low</li>
+                  <li data-id=${tasksToRender[i].id} data-value="medium">Medium</li>
+                  <li data-id=${tasksToRender[i].id} data-value="high">High</li>
                 </ol>
               </div>
             </div>
@@ -168,10 +180,10 @@ function displayTasks() {
       <fieldset>
       <label>Sort By:</label>
         <select id="sort-by">
-          <option default value="order-added">Order Added</option>
-          <option value="high-priority">Highest Priority</option>
-          <option value="medium-priority">Medium Priority</option>
-          <option value="low-priority">Lowest Priority</option>
+          <option value="order-added">Order Added</option>
+          <option value="high">Highest Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="low">Lowest Priority</option>
           <option value="done">Completed Tasks</option>
           <option value="not-done">Uncompleted Tasks</option>
         </select>
@@ -179,10 +191,10 @@ function displayTasks() {
       <fieldset>
         <label>Filter By: </label>
         <select id="filter-by">
-          <option default value="all">All</option>
-          <option value="high-priority">Highest Priority</option>
-          <option value="medium-priority">Medium Priority</option>
-          <option value="low-priority">Lowest Priority</option>
+          <option value="all">All</option>
+          <option value="high">Highest Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="low">Lowest Priority</option>
           <option value="done">Completed Tasks</option>
           <option value="not-done">Uncompleted Tasks</option>
         </select>
@@ -190,43 +202,24 @@ function displayTasks() {
       </div>
     `,
     );
+    // After The DOM Rebuilds I keep losing the current state of my select buttons. In order to fix it I am restoring the values
+    const filterSelect = document.getElementById("filter-by");
+    const sortSelect = document.getElementById("sort-by");
+
+    if (filterSelect) filterSelect.value = currentFilter; // if the filter exist in the DOM set it to the curr value
+    if (sortSelect) sortSelect.value = currentSort; //if the sort option exists in the DOM set it to the curr value
   }
-
-  // Missing: task ID, completion status, event handlers for delete/complete
-
-  // const completedButtons = document.querySelectorAll(".completed-btn");
-  // const deletedButtons = document.querySelectorAll(".deleted-btn");
-
-  // completedButtons.forEach((btn) => {
-  //   btn.addEventListener("click", () => {
-  //     // First I find where the taskList item matches the current btn's ID then save to a variable
-  //     const task = taskList.find(
-  //       (task) => task.id === Number(btn.dataset.id), // converting to Number because HTML only saves strings
-  //     );
-  //     task.setCompleted(); // class handles the logic here of setting the completion status
-  //     displayTasks(); // re-render my screen
-  //   });
-  // });
-
-  // deletedButtons.forEach((btn) => {
-  //   btn.addEventListener("click", () => {
-  //     TaskManager.removeTask(btn.dataset.id);
-  //     displayTasks(); //re-render my screen
-  //   });
-  // });
 }
 
-// Function with event handling issues
 function handleTaskClick(event) {
   const taskId = event.target.dataset.id; // Getting the task id per button as set
 
-  // Missing: event.target check
   if (event.target.classList.contains("completed-btn")) {
     // First I find where the taskList item matches the current btn's ID then save to a variable
     const task = TaskManager.tasks.find(
       (task) => task.id === Number(taskId), // converting to Number because HTML only saves strings
     );
-    task.setCompleted(); // class handles the logic here of setting the completion status
+    task.toggleCompletion(); // class handles the logic here of setting the completion status
     displayTasks(); //re-render my screen
   }
 

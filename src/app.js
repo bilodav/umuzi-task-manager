@@ -22,16 +22,17 @@ export class Task {
   }
 
   // Added method to toggle completion
-  setCompleted() {
+  toggleCompletion() {
     this.completed = !this.completed;
     saveToStorage(taskList);
   }
 }
 
-// Subtask class with inheritance issues
-class SubTask extends Task {
+// Subtask class with fixed inheritance issues
+export class SubTask extends Task {
   constructor(title, description, priority, parentTask) {
-    // Missing: super() call
+    // Added super() call
+    super(title, description, priority);
     this.parentTask = parentTask;
   }
 }
@@ -56,7 +57,7 @@ class SubTask extends Task {
 
 // Used correct Loop *** can this be something more useful that printing the title to the console?
 export function displayAllTasks() {
-  // Used for..of loop and of by one error automattically gone
+  // Used for..of loop and of by one error automatically gone
   for (let task of taskList) {
     console.log(task.title);
   }
@@ -237,6 +238,32 @@ export const TaskManager = {
   getTotalIncompleteTasks() {
     const completedList = this.tasks.filter((task) => task.completed === false);
     return completedList.length;
+  },
+
+  getFilteredTasks(filterby) {
+    // Return the array as is if "all" is selected
+    if (!filterby || filterby === "all") {
+      return [...this.tasks]; // spread to not mutate the original array
+    }
+
+    if (filterby === "done") {
+      return this.tasks.filter((task) => task.completed === true);
+    }
+
+    if (filterby === "not-done") {
+      return this.tasks.filter((task) => task.completed === false);
+    }
+
+    if (filterby === "low" || filterby === "medium" || filterby === "high") {
+      return this.tasks.filter((task) => task.priority === filterby);
+    }
+
+    return [...this.tasks]; //fallback incase some other filter slips through
+  },
+
+  getDisplayTasks(filterBy, sortBy) {
+    const filtered = this.getFilteredTasks(filterBy);
+    return filtered;
   },
 };
 

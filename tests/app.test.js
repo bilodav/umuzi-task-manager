@@ -1,11 +1,6 @@
 // Jest Tests - Starter Code with Errors and Missing Tests
 
-import {
-  Task,
-  taskList,
-  TaskManager,
-  countCompletedTasks,
-} from "../src/app.js";
+import { Task, SubTask } from "../src/app.js";
 
 // Added the imports
 
@@ -36,16 +31,38 @@ describe("Task Class", () => {
 
   // Added test for getInfo method
 
-  test("setCompleted should toggle completion", () => {
+  test("toggleCompletion() should toggle completion", () => {
     const task = new Task("Test Task", "Description", 3);
     expect(task.completed).toBe(false);
-    task.setCompleted();
+    task.toggleCompletion();
     expect(task.completed).toBe(true);
-    task.setCompleted();
+    task.toggleCompletion();
     expect(task.completed).toBe(false);
   });
 
-  // Missing: test for toggle completion
+  // Added test for toggle completion
+});
+
+// Added test block for the SubTask inheritance
+describe("SubTask inheritance", () => {
+  test("SubTask should inherit Task properties via super()", () => {
+    const parent = new Task("Parent", "Description", 2);
+    const sub = new SubTask("Child", "Sub description", 1, parent);
+
+    expect(sub.title).toBe("Child");
+    expect(sub.priority).toBe(1);
+    expect(sub.completed).toBe(false);
+    expect(sub.parentTask).toBe(parent);
+    expect(sub instanceof Task).toBe(true);
+  });
+
+  test("SubTask should inherit methods from Task", () => {
+    const parent = new Task("Parent", "Description", 2);
+    const sub = new SubTask("Child", "Sub description", 1, parent);
+
+    expect(sub.getInfo()).toBe("Task: Child - Priority: 1");
+    expect(typeof sub.toggleCompletion).toBe("function");
+  });
 });
 
 // describe("Task Functions", () => {
@@ -70,7 +87,7 @@ describe("Task Class", () => {
 // });
 
 // Missing: describe blocks for:
-// - SubTask class and inheritance
+// - SubTask class and inheritance ******* Added
 // - Destructuring functions
 // - Spread/rest operator functions
 // - Module exports/imports
