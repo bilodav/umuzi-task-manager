@@ -26,7 +26,8 @@ function setupEventListeners() {
   }
 
   // Adding the options dynamically using the single source of truth [priorities] located in utilis.js
-  priorities.forEach((priority) => {
+
+  Object.keys(priorities).forEach((priority) => {
     prioritySelect.insertAdjacentHTML(
       "beforeend",
       `
@@ -148,8 +149,8 @@ function displayTasks() {
           </div>
         </div>
         <div>
-        <button class="${taskList[i].completed ? "active" : "non"}-completed-btn completed-btn" data-id=${taskList[i].id}>${taskList[i].completed ? "Mark as not done" : "Mark as Done"}</button> 
-        <button class="delete-btn" data-id=${taskList[i].id}>Delete</button>
+        <button class="${tasksToRender[i].completed ? "active" : "non"}-completed-btn completed-btn" data-id=${tasksToRender[i].id}>${tasksToRender[i].completed ? "Mark as not done" : "Mark as Done"}</button> 
+        <button class="delete-btn" data-id=${tasksToRender[i].id}>Delete</button>
         </div>
 
 
@@ -181,9 +182,8 @@ function displayTasks() {
       <label>Sort By:</label>
         <select id="sort-by">
           <option value="order-added">Order Added</option>
-          <option value="high">Highest Priority</option>
-          <option value="medium">Medium Priority</option>
-          <option value="low">Lowest Priority</option>
+          <option value="high">Highest Priority First</option>
+          <option value="low">Lowest Priority First</option>
           <option value="done">Completed Tasks</option>
           <option value="not-done">Uncompleted Tasks</option>
         </select>
