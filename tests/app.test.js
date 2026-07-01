@@ -47,20 +47,22 @@ describe("Task Class", () => {
 describe("SubTask inheritance", () => {
   test("SubTask should inherit Task properties via super()", () => {
     const parent = new Task("Parent", "Description", 2);
-    const sub = new SubTask("Child", "Sub description", 1, parent);
+    const sub = new SubTask("Child", "Sub description", 1, parent.id);
 
     expect(sub.title).toBe("Child");
     expect(sub.priority).toBe(1);
     expect(sub.completed).toBe(false);
-    expect(sub.parentTask).toBe(parent);
+    expect(sub.parentId).toBe(parent.id);
     expect(sub instanceof Task).toBe(true);
   });
 
   test("SubTask should inherit methods from Task", () => {
     const parent = new Task("Parent", "Description", 2);
-    const sub = new SubTask("Child", "Sub description", 1, parent);
+    const sub = new SubTask("Child", "Sub description", 1, parent.id);
 
-    expect(sub.getInfo()).toBe("Task: Child - Priority: 1");
+    expect(sub.getInfo()).toBe(
+      `Subtask: Child (parent ID: ${parent.id}) - Priority: 1`,
+    );
     expect(typeof sub.toggleCompletion).toBe("function");
   });
 });

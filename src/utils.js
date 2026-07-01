@@ -1,18 +1,27 @@
 // Utilities - Starter Code (WITH ERRORS AND MISSING FEATURES)
 
 // Bug: Not using proper data structures
-export const priorities = ["low", "medium", "high"];
+export const priorities = { low: 1, medium: 2, high: 3 };
 
 // Bug: Missing JSON operations
 export function saveToStorage(data) {
   // Fixed now converting to JSON
-  localStorage.setItem("tasks", JSON.stringify(data));
+  try {
+    localStorage.setItem("tasks", JSON.stringify(data));
+  } catch (error) {
+    console.error("Failed to save tasks to storage:", error.message);
+  }
 }
 
 export function loadFromStorage() {
   // Fixed now parsing JSON
-  const data = localStorage.getItem("tasks");
-  return data ? JSON.parse(data) : []; // if data is available in storage parse it, if not use an empty array so as to not break the app
+  try {
+    const data = localStorage.getItem("tasks");
+    return data ? JSON.parse(data) : []; // if data is available in storage parse it, if not use an empty array so as to not break the app
+  } catch (error) {
+    console.error("Failed to load tasks from storage:", error.message);
+    return []; // if Bad JSON is parsed the app should still start with an empty list now
+  }
 }
 
 // Bug: Incorrect Math object usage

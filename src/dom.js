@@ -74,9 +74,9 @@ function setupEventListeners() {
 }
 
 // Function with DOM manipulation errors
-function handleAddTask() {
+function handleAddTask(e) {
   console.log("I Clicked Add Task");
-
+  e.preventDefault();
   const titleInput = document.getElementById("title");
   const descInput = document.getElementById("description");
   const prioritySelect = document.getElementById("priority");
@@ -117,40 +117,41 @@ function displayTasks() {
 
   const tasksToRender = TaskManager.getDisplayTasks(currentFilter, currentSort);
 
-  // Inefficient - should use template literals and insertAdjacentHTML ***********MAybe Gonna use a foreach / for of  here?
-  for (let i = 0; i < tasksToRender.length; i++) {
+  // using a for of loop
+  for (const task of tasksToRender) {
+    const { id, title, description, priority, completed } = task; //destructure the task object for simplicity of adding in
     taskListContainer.insertAdjacentHTML(
       "beforeend",
       `
-      <div class="task-card task-card-${tasksToRender[i].completed ? "completed" : tasksToRender[i].priority}">
+      <div class="task-card task-card-${completed ? "completed" : priority}">
         <div class="task-card-heading">
-        <h3> ${tasksToRender[i].title}</h3>
-        <p>ID: ${tasksToRender[i].id} </p>
+        <h3> ${title}</h3>
+        <p>ID: ${id} </p>
         </div>
-        <p> ${tasksToRender[i].description}</p>
+        <p> ${description}</p>
         <div class="task-card-status">
-          <p class="${tasksToRender[i].completed ? "green" : null}"> 
-          <span>Status:</span> ${tasksToRender[i].completed ? "Done" : "Still Busy"}
+          <p class="${completed ? "green" : null}"> 
+          <span>Status:</span> ${completed ? "Done" : "Still Busy"}
           </p>
           <div class="priority-status-wrapper">
-            <p class="priority-${tasksToRender[i].priority}"> 
-            <span>Priority:</span> ${formatTaskName(tasksToRender[i].priority)} 
+            <p class="priority-${priority}"> 
+            <span>Priority:</span> ${formatTaskName(priority)} 
             </p>
             <div class="status-btn-wrapper">
               <span class="change-status-btn" title="Change Status">⌄</span>
               <div class="task-card-modal-select hidden ">
                 <ol>
-                  <li data-id=${tasksToRender[i].id} data-value="low">Low</li>
-                  <li data-id=${tasksToRender[i].id} data-value="medium">Medium</li>
-                  <li data-id=${tasksToRender[i].id} data-value="high">High</li>
+                  <li data-id=${id} data-value="low">Low</li>
+                  <li data-id=${id} data-value="medium">Medium</li>
+                  <li data-id=${id} data-value="high">High</li>
                 </ol>
               </div>
             </div>
           </div>
         </div>
         <div>
-        <button class="${tasksToRender[i].completed ? "active" : "non"}-completed-btn completed-btn" data-id=${tasksToRender[i].id}>${tasksToRender[i].completed ? "Mark as not done" : "Mark as Done"}</button> 
-        <button class="delete-btn" data-id=${tasksToRender[i].id}>Delete</button>
+        <button class="${completed ? "active" : "non"}-completed-btn completed-btn" data-id=${id}>${completed ? "Mark as not done" : "Mark as Done"}</button> 
+        <button class="delete-btn" data-id=${id}>Delete</button>
         </div>
 
 
@@ -212,7 +213,7 @@ function displayTasks() {
 }
 
 function handleTaskClick(event) {
-  const taskId = event.target.dataset.id; // Getting the task id per button as set
+  const { id: taskId } = event.target.dataset; // Getting the task id per button as set using Object Destructuring
 
   if (event.target.classList.contains("completed-btn")) {
     // First I find where the taskList item matches the current btn's ID then save to a variable
@@ -240,16 +241,8 @@ function handleTaskClick(event) {
     event.target.parentElement.classList.toggle("hidden");
     displayTasks();
   }
-
-  // Missing: proper event delegation
-
-  // Should toggle task completion
-  console.log("Task clicked: " + taskId);
+  console.log(`Task clicked: ${taskId}`);
 }
-
-// Missing: JSON conversion functions
-
-// Missing: functions to save/load tasks from localStorage
 
 // Initialize (wrong placement - should use DOMContentLoaded)
 document.addEventListener("DOMContentLoaded", setupEventListeners);
