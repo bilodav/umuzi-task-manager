@@ -1,8 +1,8 @@
 import {
   taskList,
   TaskManager,
-  countCompletedTasks,
   loadTasks,
+  calculateAveragePriority,
 } from "./app.js";
 import { formatTaskName, priorities } from "./utils.js";
 // DOM Manipulation - Starter Code with Errors
@@ -69,20 +69,14 @@ function setupEventListeners() {
       displayTasks();
     }
   });
-
-  // Missing: other event listeners for form submission, etc. ************************************** DOES this form need to be here
 }
 
-// Function with DOM manipulation errors
 function handleAddTask(e) {
   console.log("I Clicked Add Task");
   e.preventDefault();
   const titleInput = document.getElementById("title");
   const descInput = document.getElementById("description");
   const prioritySelect = document.getElementById("priority");
-
-  // No validation
-  // Should use event.preventDefault() if form *********************************************
 
   const title = titleInput.value;
   const description = descInput.value;
@@ -102,7 +96,6 @@ function handleAddTask(e) {
 let currentFilter = "all";
 let currentSort = "order-added";
 
-// Function that should use better selectors
 function displayTasks() {
   const taskListContainer = document.getElementById("task-list");
   const statisticsContainer = document.querySelector(".statistics");
@@ -115,11 +108,32 @@ function displayTasks() {
   taskListContainer.innerHTML = ``;
   statisticsContainer.innerHTML = ``;
 
-  const tasksToRender = TaskManager.getDisplayTasks(currentFilter, currentSort);
+  // Filtering the main list to ensure only top level is rendering or else subtasks ends up being rendered too
+  const tasksToRender = TaskManager.getDisplayTasks(
+    currentFilter,
+    currentSort,
+  ).filter((task) => !task.parentId);
 
   // using a for of loop
   for (const task of tasksToRender) {
     const { id, title, description, priority, completed } = task; //destructure the task object for simplicity of adding in
+
+    // FIlter out to see if there is a subTask in the array that matches the id
+    const subTasks = TaskManager.tasks.filter(
+      (subTask) => subTask.parentId === id,
+    );
+    // Get all the subtask items into a list
+    const subTaskItems = subTasks
+      .map(
+        (item) => `
+    <li data-id=${item.id}>
+    ${item.title}
+    <span class="rmv-subTask" data-id=${item.id}>X</span>
+    </li>
+    `,
+      )
+      .join("");
+
     taskListContainer.insertAdjacentHTML(
       "beforeend",
       `
@@ -150,10 +164,25 @@ function displayTasks() {
           </div>
         </div>
         <div>
-        <button class="${completed ? "active" : "non"}-completed-btn completed-btn" data-id=${id}>${completed ? "Mark as not done" : "Mark as Done"}</button> 
+    
+        <button class="${completed ? "active" : "non"}-completed-btn completed-btn" data-id=${id}>${completed ? "Mark as not done" : "Mark as Done"}</button>
         <button class="delete-btn" data-id=${id}>Delete</button>
         </div>
-
+        ${
+          completed
+            ? ""
+            : `<button class="add-subTask-btn" data-id=${id}>
+        Add Subtask
+        </button>`
+        }
+        
+        <form class="subtask-input hidden" data-parent-id=${id}>
+          <input type="text" class="subTask-title-input" placeholder="Enter a Subtask here" >
+          <button type="submit" class="add-subTask-submit">Add</button>
+        </form>
+        <ol class="subtask-list">
+        ${completed ? "" : subTaskItems}
+        </ol>
 
       </div>
       `,
@@ -172,11 +201,15 @@ function displayTasks() {
     </div>
     <div class="stat-card">
       <p>Total Tasks Completed :</p>
-      <p>${countCompletedTasks(taskList, 0)}</p>
+      <p>${TaskManager.countCompletedTasks(0)}</p>
     </div>
     <div class="stat-card">
       <p>Total Tasks Remaining :</p>
       <p>${TaskManager.getTotalIncompleteTasks()}</p>
+    </div>
+    <div class="stat-card">
+      <p>Average Task Priority:</p>
+      <p>${calculateAveragePriority(taskList)}</p>
     </div>
     <div class="filter-task-section">
       <fieldset>
@@ -241,6 +274,34 @@ function handleTaskClick(event) {
     event.target.parentElement.classList.toggle("hidden");
     displayTasks();
   }
+
+  //Check if I am clicking add subtas unhide the form and add the task
+  if (event.target.classList.contains("add-subTask-btn")) {
+    console.log("come back here");
+    event.target.nextElementSibling.classList.toggle("hidden");
+  }
+
+  if (event.target.classList.contains("add-subTask-submit")) {
+    event.preventDefault();
+    const form = event.target.closest("form");
+    const input = form.querySelector(".subTask-title-input");
+    const parentId = form.dataset.parentId;
+    const parentTask = TaskManager.tasks.find(
+      (task) => task.id === Number(parentId),
+    );
+
+    TaskManager.addSubTask(input.value, "", parentTask.priority, parentId);
+
+    form.classList.add("hidden");
+    displayTasks();
+  }
+
+  if (event.target.classList.contains("rmv-subTask")) {
+    const subTaskId = event.target.dataset.id;
+    TaskManager.removeTask(subTaskId);
+    displayTasks();
+  }
+
   console.log(`Task clicked: ${taskId}`);
 }
 

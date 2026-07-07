@@ -335,25 +335,6 @@ body {
   transform: translateY(2px) scale(0.98);
 }
 
-/* .delete-btn {
-  background-color: var(--btn-accent-bg);
-  color: var(--btn-accent-text);
-  border: none;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-md);
-  font-family: var(--font-body);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--btn-accent-shadow);
-}
-
-.delete-btn:hover {
-  background-color: var(--btn-accent-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
-} */
-
 .completed-btn {
   border: 2px solid var(--btn-secondary-border);
   padding: var(--spacing-xs) var(--spacing-md);
@@ -420,6 +401,24 @@ body {
 }
 
 .change-status-btn:hover {
+  background-color: var(--btn-secondary-hover-bg);
+  color: var(--btn-secondary-hover-text);
+}
+
+.add-subTask-btn {
+  border: 2px solid var(--btn-secondary-border);
+  background: none;
+  padding: 2px var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin: 3px 5% 3px 13%;
+  width: 75%;
+}
+
+.add-subTask-btn:hover {
   background-color: var(--btn-secondary-hover-bg);
   color: var(--btn-secondary-hover-text);
 }
@@ -610,6 +609,7 @@ select:focus {
 .task-card-modal-select li {
   text-align: center;
   padding: 3px 8px;
+
   border-bottom: 1px solid var(--bg-dark);
   transition:
     color var(--transition-base),
@@ -624,6 +624,38 @@ select:focus {
   color: var(--color-light);
   background-color: var(--bg-dark);
   cursor: pointer;
+}
+
+.subtask-list {
+  width: 90%;
+  margin: 10px auto;
+  padding-left: 1.5rem;
+}
+
+.subtask-list li {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid var(--color-gray-500);
+}
+
+.rmv-subTask {
+  background-color: var(--btn-outline-bg);
+  color: var(--btn-outline-text);
+  border: 1.5px solid var(--btn-outline-border);
+  padding: 2px 5px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-size: 0.8rem;
+}
+
+.rmv-subTask:hover {
+  background-color: var(--btn-outline-hover-bg);
+  color: var(--btn-outline-hover-text);
 }
 
 .statistics:not(:has(.stat-card)) {

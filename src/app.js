@@ -45,24 +45,6 @@ export class SubTask extends Task {
   }
 }
 
-// Functions with errors
-
-// Function with no error handling
-// export function addTask(title, description, priority) {
-//   const newTask = new Task(title, description, priority); // changed to const
-//   taskList.push(newTask);
-
-//   taskCounter++;
-//   console.log("New Task Added");
-//   console.log(taskCounter);
-
-//   console.log(taskList);
-
-//   return newTask;
-// }
-
-// Added the function to TaskMAnger as central place to manage the tasks
-
 // Used correct Loop *** can this be something more useful that printing the title to the console?
 export function displayAllTasks() {
   // Used for..of loop and of by one error automatically gone
@@ -85,22 +67,6 @@ function findTaskByTitle() {
   }
   return undefined;
 }
-
-// +++++++++++++++ ADDED THIS FUNCTION TO THE TASK MANAGER +++++++++++++++++++++++
-// // Function with type checking issues
-// function updateTaskPriority(taskId, newPriority) {
-//   // Missing: typeof check for parameters
-//   // Missing: null/undefined validation
-
-//   for (var i = 0; i < taskList.length; i++) {
-//     if ((taskList[i].id = taskId)) {
-//       // Wrong operator (= instead of ===)
-//       taskList[i].priority = newPriority;
-//       return true;
-//     }
-//   }
-//   return false;
-// }
 
 // This is used in dom.js on load to restore saved tasks
 export function loadTasks() {
@@ -129,70 +95,53 @@ export function loadTasks() {
   });
 }
 
-// Function that should use destructuring but doesn't
-function getTaskDetails(task) {
-  // Should destructure task properties
-  var title = task.title;
-  var description = task.description;
-  var priority = task.priority;
-  var completed = task.completed;
+// // Function that should use destructuring but doesn't
+// function getTaskDetails(task) {
+//   // Should destructure task properties
+//   var title = task.title;
+//   var description = task.description;
+//   var priority = task.priority;
+//   var completed = task.completed;
 
-  return {
-    title: title,
-    description: description,
-    priority: priority,
-    completed: completed,
-  };
+//   return {
+//     title: title,
+//     description: description,
+//     priority: priority,
+//     completed: completed,
+//   };
+// }
+
+// // Function missing spread/rest operators
+// function mergeTasks(list1, list2) {
+//   // Should use spread operator
+//   var merged = [];
+//   for (var i = 0; i < list1.length; i++) {
+//     merged.push(list1[i]);
+//   }
+//   for (var i = 0; i < list2.length; i++) {
+//     merged.push(list2[i]);
+//   }
+//   return merged;
+// }
+
+export function calculateAveragePriority(tasks) {
+  //Ensure that tasks is actually an array and that it is greater than 0
+  if (!Array.isArray(tasks) || tasks.length === 0) return 0;
+  const total = tasks.reduce((sum, task) => sum + priorities[task.priority], 0);
+  return Number(total / tasks.length).toFixed(2);
 }
 
-// Function missing spread/rest operators
-function mergeTasks(list1, list2) {
-  // Should use spread operator
-  var merged = [];
-  for (var i = 0; i < list1.length; i++) {
-    merged.push(list1[i]);
-  }
-  for (var i = 0; i < list2.length; i++) {
-    merged.push(list2[i]);
-  }
-  return merged;
-}
-
-// Recursive function with error
-export function countCompletedTasks(tasks, index) {
-  // Added base case check
-  // Missing: null/undefined check
-  if (index === tasks.length) return 0;
-
-  if (tasks[index].completed) {
-    return 1 + countCompletedTasks(tasks, index + 1);
-  } else {
-    return countCompletedTasks(tasks, index + 1);
-  }
-}
-
-// Function with Math object issues
-function calculateAveragePriority() {
-  var total = 0;
-  // Missing: check for empty array
-  for (var i = 0; i < taskList.length; i++) {
-    total = total + taskList[i].priority;
-  }
-  // Should use Math.round or toFixed
-  return total / taskList.length;
-}
-
-// Filter function with errors
-function getHighPriorityTasks(minPriority) {
-  var highPriority = [];
-  // Should use array methods (filter)
-  for (var i = 0; i < taskList.length; i++) {
-    if (taskList[i].priority > minPriority) {
-      highPriority.push(taskList[i]);
-    }
-  }
-  return highPriority;
-}
+// // Filter function with errors
+// function getHighPriorityTasks(minPriority) {
+//   var highPriority = [];
+//   // Should use array methods (filter)
+//   for (var i = 0; i < taskList.length; i++) {
+//     if (taskList[i].priority > minPriority) {
+//       highPriority.push(taskList[i]);
+//     }
+//   }
+//   return highPriority;
+// }
 
 // Object with missing methods
 export const TaskManager = {
@@ -226,21 +175,32 @@ export const TaskManager = {
   },
 
   removeTask(taskId) {
-    // First I find where the Index of the taskList item that matches the current passed in btn's ID then save to a variable
-    const taskIndex = this.tasks.findIndex(
-      (task) => task.id === Number(taskId),
-    );
-    // Delete the index from the array using the splice method to mutate the original array
-    this.tasks.splice(taskIndex, 1);
+    // First I find all the ids I need to remove
+    const idsToRemove = this.tasks
+      .filter(
+        (task) =>
+          task.id === Number(taskId) || task.parentId === Number(taskId),
+      )
+      .map((task) => task.id);
+
+    // loop over the tasks array and remove the matching tasks in place, preserving the array reference
+    for (let i = this.tasks.length - 1; i >= 0; i--) {
+      if (idsToRemove.includes(this.tasks[i].id)) {
+        this.tasks.splice(i, 1);
+      }
+    }
     taskCounter--;
     saveToStorage(this.tasks);
-    console.log(taskCounter);
   },
 
   updateTaskPriority(taskId, newPriority) {
     // Missing: typeof check for parameters
     // Missing: null/undefined validation
 
+    if (typeof newPriority !== "string" || !priorities[newPriority]) {
+      console.error("Invalid property value");
+      return false;
+    }
     for (let i = 0; i < this.tasks.length; i++) {
       if (this.tasks[i].id === Number(taskId)) {
         // Operator fixed (=== instead of =)
@@ -354,6 +314,4 @@ export const TaskManager = {
   },
 };
 
-// Export issues - should be a module
-// Missing: proper module exports
 // This is app.js
