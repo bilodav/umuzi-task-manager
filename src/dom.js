@@ -118,17 +118,20 @@ function displayTasks() {
   for (const task of tasksToRender) {
     const { id, title, description, priority, completed } = task; //destructure the task object for simplicity of adding in
 
-    // FIlter out to see if there is a subTask in the array that matches the id
-    const subTasks = TaskManager.tasks.filter(
-      (subTask) => subTask.parentId === id,
+    // FIlter out to see if there is a subtask in the array that matches the id
+    const subtasks = TaskManager.tasks.filter(
+      (subtask) => subtask.parentId === id,
     );
     // Get all the subtask items into a list
-    const subTaskItems = subTasks
+    const subtaskItems = subtasks
       .map(
         (item) => `
-    <li data-id=${item.id}>
-    ${item.title}
-    <span class="rmv-subTask" data-id=${item.id}>X</span>
+    <li class=${item.completed ? "completed-task" : ""} data-id=${item.id}>
+    <span class="subtask-title">${item.title}</span>
+    <div>
+    <span title="Toggle Completion" class="complete-subtask" data-id=${item.id}>✔</span>
+    <span title="Delete Subtask" class="rmv-subtask" data-id=${item.id}>×</span>
+    </div>
     </li>
     `,
       )
@@ -166,22 +169,23 @@ function displayTasks() {
         <div>
     
         <button class="${completed ? "active" : "non"}-completed-btn completed-btn" data-id=${id}>${completed ? "Mark as not done" : "Mark as Done"}</button>
+        <span class="red-message d-hidden">All subtasks must be marked as completed</span>
         <button class="delete-btn" data-id=${id}>Delete</button>
         </div>
         ${
           completed
             ? ""
-            : `<button class="add-subTask-btn" data-id=${id}>
+            : `<button class="add-subtask-btn" data-id=${id}>
         Add Subtask
         </button>`
         }
         
         <form class="subtask-input hidden" data-parent-id=${id}>
-          <input type="text" class="subTask-title-input" placeholder="Enter a Subtask here" >
-          <button type="submit" class="add-subTask-submit">Add</button>
+          <input type="text" class="subtask-title-input" placeholder="Enter a Subtask here" >
+          <button type="submit" class="add-subtask-submit">Add</button>
         </form>
         <ol class="subtask-list">
-        ${completed ? "" : subTaskItems}
+        ${completed ? "" : subtaskItems}
         </ol>
 
       </div>
@@ -209,7 +213,7 @@ function displayTasks() {
     </div>
     <div class="stat-card">
       <p>Average Task Priority:</p>
-      <p>${calculateAveragePriority(taskList)}</p>
+      <p>${calculateAveragePriority(taskList.filter((task) => !task.parentId && !task.completed))}</p>
     </div>
     <div class="filter-task-section">
       <fieldset>
@@ -253,6 +257,27 @@ function handleTaskClick(event) {
     const task = TaskManager.tasks.find(
       (task) => task.id === Number(taskId), // converting to Number because HTML only saves strings
     );
+
+    //Search if a subtask belonging to this task isnt completed yet
+    let hasIncompletedSubtask = false;
+    for (let i = 0; i < TaskManager.tasks.length; i++) {
+      if (
+        TaskManager.tasks[i].parentId === Number(taskId) &&
+        !TaskManager.tasks[i].completed
+      ) {
+        hasIncompletedSubtask = true;
+        break;
+      }
+    }
+
+    if (hasIncompletedSubtask) {
+      event.target.nextElementSibling.classList.remove("d-hidden");
+      setTimeout(() => {
+        event.target.nextElementSibling.classList.add("d-hidden");
+      }, 5000);
+      return;
+    }
+
     task.toggleCompletion(); // class handles the logic here of setting the completion status
     displayTasks(); //re-render my screen
   }
@@ -276,29 +301,41 @@ function handleTaskClick(event) {
   }
 
   //Check if I am clicking add subtas unhide the form and add the task
-  if (event.target.classList.contains("add-subTask-btn")) {
+  if (event.target.classList.contains("add-subtask-btn")) {
     console.log("come back here");
     event.target.nextElementSibling.classList.toggle("hidden");
   }
 
-  if (event.target.classList.contains("add-subTask-submit")) {
+  if (event.target.classList.contains("add-subtask-submit")) {
     event.preventDefault();
     const form = event.target.closest("form");
-    const input = form.querySelector(".subTask-title-input");
+    const input = form.querySelector(".subtask-title-input");
     const parentId = form.dataset.parentId;
     const parentTask = TaskManager.tasks.find(
       (task) => task.id === Number(parentId),
     );
 
-    TaskManager.addSubTask(input.value, "", parentTask.priority, parentId);
+    TaskManager.addSubtask(input.value, "", parentTask.priority, parentId);
 
     form.classList.add("hidden");
     displayTasks();
   }
 
-  if (event.target.classList.contains("rmv-subTask")) {
-    const subTaskId = event.target.dataset.id;
-    TaskManager.removeTask(subTaskId);
+  if (event.target.classList.contains("complete-subtask")) {
+    const subtaskId = event.target.dataset.id;
+
+    // First I find where the taskList item matches the current btn's ID then save to a variable
+    const task = TaskManager.tasks.find(
+      (task) => task.id === Number(subtaskId), // converting to Number because HTML only saves strings
+    );
+
+    task.toggleCompletion();
+    displayTasks();
+  }
+
+  if (event.target.classList.contains("rmv-subtask")) {
+    const subtaskId = event.target.dataset.id;
+    TaskManager.removeTask(subtaskId);
     displayTasks();
   }
 

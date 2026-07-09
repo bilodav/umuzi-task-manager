@@ -129,7 +129,8 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ROOT STYLING */
+/* ----------------------CSS ROOT PROPERTIES -----------------------------------*/
+/* Root properties allows me to have a central place for basic styles like fonts and colors so that its easier to update my code and reduce repetitive code  */
 
 :root {
   /* Typography */
@@ -146,17 +147,17 @@ html {
   --line-height-relaxed: 1.8;
 
   /* Primary Colors - Deep Navy & Gold (Elegant & Prestigious) */
-  --color-primary: #1a2332; /* Deep navy blue */
-  --color-primary-light: #2d3e50; /* Lighter navy */
-  --color-primary-dark: #0f1419; /* Darker navy */
+  --color-primary: #1a2332;
+  --color-primary-light: #2d3e50;
+  --color-primary-dark: #0f1419;
 
-  --color-accent: #c9a961; /* Elegant gold */
-  --color-accent-light: #d4bc7f; /* Light gold */
-  --color-accent-dark: #b8954a; /* Dark gold */
+  --color-accent: #c9a961;
+  --color-accent-light: #d4bc7f;
+  --color-accent-dark: #b8954a;
 
   /* Secondary Colors */
-  --color-secondary: #3d5a80; /* Slate blue */
-  --color-secondary-light: #5a7a9f; /* Light slate */
+  --color-secondary: #3d5a80;
+  --color-secondary-light: #5a7a9f;
 
   /* Neutral Colors */
   --color-white: #ffffff;
@@ -315,7 +316,9 @@ body {
   background-color: var(--btn-primary-bg);
   color: var(--btn-primary-text);
   border: none;
-  padding: var(--spacing-sm) var(--spacing-lg);
+  height: 48px;
+  width: 120px;
+  padding: 0 var(--spacing-md);
   border-radius: var(--radius-md);
   font-family: var(--font-body);
   font-weight: var(--font-weight-medium);
@@ -405,7 +408,7 @@ body {
   color: var(--btn-secondary-hover-text);
 }
 
-.add-subTask-btn {
+.add-subtask-btn {
   border: 2px solid var(--btn-secondary-border);
   background: none;
   padding: 2px var(--spacing-md);
@@ -418,104 +421,187 @@ body {
   width: 75%;
 }
 
-.add-subTask-btn:hover {
+.add-subtask-btn:hover {
   background-color: var(--btn-secondary-hover-bg);
   color: var(--btn-secondary-hover-text);
 }
 
-.container {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-template-rows: auto;
-  width: 90%;
-  margin: 0 auto;
-  column-gap: 10px;
+/* Small devices (Phones, 300px and up) - media query - for good responsiveness */
+@media (min-width: 300px) {
+  body {
+  }
 }
 
-h1 {
-  margin: 3vh 0 3vh;
-  text-align: center;
-  grid-column: 1/3;
+/* Medium devices (tablets, 768px and up) - media query - for good responsiveness  */
+@media (min-width: 768px) {
+  body {
+  }
 }
 
-.add-task-section {
-  grid-column: 1/3;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-dark);
-  border-radius: var(--radius-lg);
-
-  padding: 20px;
+/* Large devices (desktops, 992px and up) - media query - for good responsiveness  */
+@media (min-width: 992px) {
+  body {
+  }
 }
 
-.add-task-section h2 {
-  margin: 0;
+/* _____________________________________________________________________________________________________ */
+/* ----------------------------------- OVERALL UI CONTAINER -------------------------------------------- */
+/* _____________________________________________________________________________________________________ */
+
+@media (min-width: 300px) {
+  .app-container {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    width: 90%;
+    margin: 0 auto;
+    column-gap: 5px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    margin-top: 2vh;
+    margin-bottom: 0;
+    text-align: center;
+    grid-column: 1/2;
+  }
 }
 
-.add-task-section div {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+@media (min-width: 768px) {
+  .app-container {
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: auto;
+    height: 100vh;
+  }
+
+  h1 {
+    grid-column: 1/3;
+    margin-top: 3vh;
+  }
 }
 
-select,
-input {
-  padding: 0;
-  border: none;
-  outline: none;
-  box-sizing: border-box;
-}
-input {
-  width: 33%;
+/* ___________________________________________________________________________________________________ */
+/* ----------------------------------- ADD TASK CONTAINER -------------------------------------------- */
+/* ___________________________________________________________________________________________________ */
+
+/* Small devices (Phones, 300px and up) - media query - for good responsiveness */
+@media (min-width: 300px) {
+  .add-task-section {
+    grid-column: 1/2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius-lg);
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0px 20px 10px;
+  }
+
+  .add-task-section h2 {
+    margin: 0;
+  }
+
+  .add-task-section div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .add-task-form {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 5px;
+    width: 85%;
+    justify-content: flex-start;
+  }
+
+  .add-task-form .add-task-btn {
+    justify-self: flex-end;
+  }
+
+  select,
+  input {
+    padding: 0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+  }
+  input {
+    min-width: 300px;
+    width: 100%;
+  }
+
+  input::placeholder {
+    color: var(--color-gray-500);
+  }
+
+  select {
+    cursor: pointer;
+    width: 120px;
+  }
+
+  select option[value=""][disabled] {
+    color: var(--color-gray-400);
+  }
+
+  select:valid {
+    color: var(--text-secondary);
+  }
+
+  select:invalid {
+    color: var(--color-gray-400);
+  }
+
+  input,
+  select {
+    background-color: var(--bg-primary);
+    padding: 10px;
+    padding-left: 20px;
+    height: 50px;
+    font-size: 14px;
+    border-radius: var(--radius-md);
+    border: none;
+    box-shadow: var(--shadow-inset);
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border: none;
+    box-shadow:
+      inset 4px 4px 8px rgba(26, 35, 50, 0.06),
+      inset -4px -4px 8px rgba(255, 255, 255, 0.9),
+      0 0 0 2px rgba(60, 52, 31, 0.784);
+  }
 }
 
-input::placeholder {
-  color: var(--color-gray-500);
+/* Medium devices (tablets, 768px and up) - media query - for good responsiveness  */
+@media (min-width: 768px) {
+  .add-task-section {
+    grid-column: 1/3;
+  }
+  .add-task-form {
+    flex-direction: row;
+    gap: 15px;
+  }
+
+  input {
+    min-width: 300px;
+    width: 45%;
+  }
 }
 
-select {
-  cursor: pointer;
+/* Large devices (desktops, 992px and up) - media query - for good responsiveness  */
+@media (min-width: 992px) {
+  input {
+    width: 35%;
+  }
 }
 
-select option[value=""][disabled] {
-  color: var(--color-gray-400);
-}
-
-select:valid {
-  color: var(--text-secondary);
-}
-
-select:invalid {
-  color: var(--color-gray-400);
-}
-
-input,
-select {
-  background-color: var(--bg-primary);
-  padding: 10px;
-  padding-left: 20px;
-  height: 50px;
-  font-size: 14px;
-  border-radius: var(--radius-md);
-  border: none;
-  box-shadow: var(--shadow-inset);
-
-  /* box-shadow:
-    inset 4px 4px 8px rgba(26, 35, 50, 0.127),
-    inset -4px -4px 8px #f6f4f4; */
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  border: none;
-  box-shadow:
-    inset 4px 4px 8px rgba(26, 35, 50, 0.06),
-    inset -4px -4px 8px rgba(255, 255, 255, 0.9),
-    0 0 0 2px rgba(60, 52, 31, 0.784);
-}
+/* ----------------------------------- TASK LIST CONTAINER -------------------------------------------- */
 
 .task-list:not(:has(.task-card)) {
   display: none;
@@ -525,15 +611,17 @@ select:focus {
   grid-column: 1/2;
   display: flex;
   flex-direction: column;
-  max-height: 56vh;
+  max-height: 68vh;
   margin-top: 2vh;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-dark);
   border-radius: var(--radius-lg);
   overflow-y: scroll;
-  padding: 15px 7.5px;
+  padding: 15px 20px;
   gap: 10px;
 }
+
+/* ----------------------------------- TASK CARD -------------------------------------------- */
 
 .task-card {
   padding: 10px;
@@ -595,6 +683,12 @@ select:focus {
   margin: 0 0 0 5px;
 }
 
+.red-message {
+  color: red;
+  font-size: 0.75rem;
+  animation: wobble 1s ease;
+}
+
 .task-card-modal-select {
   width: auto;
   position: absolute;
@@ -626,6 +720,39 @@ select:focus {
   cursor: pointer;
 }
 
+/* ----------------------------------- SUB TASK-------------------------------------------- */
+
+.subtask-input {
+  width: 50%;
+  display: flex;
+  margin: 1% 0 1% 25%;
+}
+
+.subtask-title-input {
+  width: 100%;
+  height: 35px;
+}
+
+.add-subtask-submit {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+  padding: 3px 15px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--btn-primary-shadow);
+  margin-left: 8px;
+}
+
+.add-subtask-submit:hover {
+  background-color: var(--btn-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
 .subtask-list {
   width: 90%;
   margin: 10px auto;
@@ -640,9 +767,14 @@ select:focus {
   border-bottom: 1px solid var(--color-gray-500);
 }
 
-.rmv-subTask {
+.completed-task .subtask-title {
+  text-decoration: line-through;
+}
+
+.rmv-subtask {
   background-color: var(--btn-outline-bg);
   color: var(--btn-outline-text);
+  margin-left: 3px;
   border: 1.5px solid var(--btn-outline-border);
   padding: 2px 5px;
   border-radius: var(--radius-sm);
@@ -653,67 +785,101 @@ select:focus {
   font-size: 0.8rem;
 }
 
-.rmv-subTask:hover {
+.rmv-subtask:hover {
   background-color: var(--btn-outline-hover-bg);
   color: var(--btn-outline-hover-text);
 }
 
-.statistics:not(:has(.stat-card)) {
-  display: none;
-}
-
-.statistics {
-  grid-column: 2/3;
-  display: flex;
-  flex-direction: column;
-  height: 60vh;
-  margin-top: 2vh;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-dark);
-  border-radius: var(--radius-lg);
-}
-
-.stat-card {
-  display: flex;
-  padding: 15px;
-  align-items: center;
-  height: 3vh;
-  width: 80%;
-  margin: 15px auto 0;
-  border: 1px solid var(--border-dark);
+.complete-subtask {
+  border: 1.5px solid var(--btn-secondary-border);
+  background: none;
+  padding: 2px 5px;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  background-color: var(--bg-primary);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin: 3px 5% 3px 13%;
+  width: 75%;
+  font-size: 0.8rem;
 }
 
-.stat-card p:first-of-type {
-  font-weight: var(--font-weight-semibold);
-  font-size: 0.9rem;
+.complete-subtask:hover {
+  background-color: var(--btn-secondary-hover-bg);
+  color: var(--btn-secondary-hover-text);
 }
 
-.filter-task-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 85%;
-  margin: 10px auto;
+/* ----------------------------------- STATISTICS CONTAINER -------------------------------------------- */
+
+/* Small devices (Phones, 300px and up) - media query - for good responsiveness */
+@media (min-width: 300px) {
+  .statistics:not(:has(.stat-card)) {
+    display: none;
+  }
+
+  .statistics {
+    grid-column: 1/2;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin-top: 2vh;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius-lg);
+  }
+
+  .stat-card {
+    display: flex;
+    padding: 15px;
+    align-items: center;
+    height: 3vh;
+    width: 80%;
+    margin: 15px auto 0;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    background-color: var(--bg-primary);
+  }
+
+  .stat-card p:first-of-type {
+    font-weight: var(--font-weight-semibold);
+    font-size: 0.9rem;
+  }
+
+  .filter-task-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 85%;
+    margin: 10px auto;
+  }
+
+  .filter-task-section fieldset {
+    width: 85%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .filter-task-section label {
+    font-weight: var(--font-weight-semibold);
+    font-size: 0.85rem;
+  }
+
+  .filter-task-section select {
+    min-width: 150px;
+    width: 80%;
+  }
 }
 
-.filter-task-section fieldset {
-  width: 85%;
-  display: flex;
-  flex-wrap: wrap;
+/* Medium devices (tablets, 768px and up) - media query - for good responsiveness  */
+@media (min-width: 768px) {
+  .statistics {
+    grid-column: 2/3;
+    height: 72vh;
+  }
 }
 
-.filter-task-section label {
-  font-weight: var(--font-weight-semibold);
-  font-size: 0.85rem;
-}
-
-.filter-task-section select {
-  min-width: 150px;
-  width: 80%;
-}
+/* ----------------------------------- GENRAL STYLINGS-------------------------------------------- */
 
 .priority-medium {
   color: orange;
@@ -729,4 +895,35 @@ select:focus {
 
 .hidden {
   visibility: hidden;
+}
+
+.d-hidden {
+  display: none;
+}
+
+/* ----------------------------------- ANIMATIONS-------------------------------------------- */
+
+/* Wobble animation */
+@keyframes wobble {
+  0% {
+    transform: translateX(0%);
+  }
+  15% {
+    transform: translateX(-15%) rotate(-4deg);
+  }
+  30% {
+    transform: translateX(10%) rotate(2deg);
+  }
+  45% {
+    transform: translateX(-5%) rotate(-2deg);
+  }
+  60% {
+    transform: translateX(5%) rotate(1deg);
+  }
+  75% {
+    transform: translateX(-1%) rotate(-1deg);
+  }
+  100% {
+    transform: translateX(0%);
+  }
 }

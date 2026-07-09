@@ -34,7 +34,7 @@ export class Task {
 }
 
 // Subtask class with fixed inheritance issues
-export class SubTask extends Task {
+export class Subtask extends Task {
   constructor(title, description, priority, parentId) {
     // Added super() call
     super(title, description, priority);
@@ -77,7 +77,7 @@ export function loadTasks() {
       let task;
       // check if the task has a parent id property to determine if it is a subtask
       if (item.parentId !== undefined && item.parentId !== null) {
-        task = new SubTask(
+        task = new Subtask(
           item.title,
           item.description,
           item.priority,
@@ -295,22 +295,22 @@ export const TaskManager = {
     return this.sortTasks(filtered, sortBy);
   },
 
-  addSubTask(title, description, priority, parentId) {
+  addSubtask(title, description, priority, parentId) {
     const parentTask = this.tasks.find((task) => task.id === Number(parentId));
-    if (!parentId) {
+    if (!parentTask) {
       console.log("Parent task not found");
       return null;
     }
 
-    const newSubTask = new SubTask(
+    const newSubtask = new Subtask(
       title,
       description,
       priority,
       Number(parentId),
     );
-    this.tasks.push(newSubTask);
+    this.tasks.push(newSubtask);
     saveToStorage(this.tasks);
-    return newSubTask;
+    return newSubtask;
   },
 };
 
