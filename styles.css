@@ -426,24 +426,6 @@ body {
   color: var(--btn-secondary-hover-text);
 }
 
-/* Small devices (Phones, 300px and up) - media query - for good responsiveness */
-@media (min-width: 300px) {
-  body {
-  }
-}
-
-/* Medium devices (tablets, 768px and up) - media query - for good responsiveness  */
-@media (min-width: 768px) {
-  body {
-  }
-}
-
-/* Large devices (desktops, 992px and up) - media query - for good responsiveness  */
-@media (min-width: 992px) {
-  body {
-  }
-}
-
 /* _____________________________________________________________________________________________________ */
 /* ----------------------------------- OVERALL UI CONTAINER -------------------------------------------- */
 /* _____________________________________________________________________________________________________ */
