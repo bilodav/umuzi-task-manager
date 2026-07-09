@@ -529,11 +529,6 @@ body {
     outline: none;
     box-sizing: border-box;
   }
-  input {
-    min-width: 300px;
-    width: 100%;
-  }
-
   input::placeholder {
     color: var(--color-gray-500);
   }
@@ -576,6 +571,10 @@ body {
       inset -4px -4px 8px rgba(255, 255, 255, 0.9),
       0 0 0 2px rgba(60, 52, 31, 0.784);
   }
+
+  .add-task-input {
+    width: 100%;
+  }
 }
 
 /* Medium devices (tablets, 768px and up) - media query - for good responsiveness  */
@@ -588,7 +587,7 @@ body {
     gap: 15px;
   }
 
-  input {
+  .add-task-input {
     min-width: 300px;
     width: 45%;
   }
@@ -596,7 +595,7 @@ body {
 
 /* Large devices (desktops, 992px and up) - media query - for good responsiveness  */
 @media (min-width: 992px) {
-  input {
+  .add-task-input {
     width: 35%;
   }
 }
@@ -723,9 +722,9 @@ body {
 /* ----------------------------------- SUB TASK-------------------------------------------- */
 
 .subtask-input {
-  width: 50%;
+  width: 80%;
   display: flex;
-  margin: 1% 0 1% 25%;
+  margin: 1% 0 1% 10%;
 }
 
 .subtask-title-input {
