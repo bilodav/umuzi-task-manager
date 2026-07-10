@@ -24,7 +24,7 @@ function setupEventListeners() {
     return;
   }
 
-  // Adding the options dynamically using the single source of truth [priorities] located in utilis.js
+  // Adding the options dynamically using the single source of truth [priorities] that is  located in utilis.js
 
   Object.keys(priorities).forEach((priority) => {
     prioritySelect.insertAdjacentHTML(
