@@ -265,6 +265,12 @@ export const TaskManager = {
       return null;
     }
 
+    if (!title.trim()) {
+      console.log("No title added");
+
+      return null;
+    }
+
     const newSubtask = new Subtask(
       title,
       description,

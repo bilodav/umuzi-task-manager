@@ -9,7 +9,6 @@ import { formatTaskName, priorities } from "./utils.js";
 
 // Added the proper DOM selectors
 function setupEventListeners() {
-  console.log("LOADED THE DOM");
   loadTasks();
   displayTasks();
   // Corrected selector method
@@ -24,7 +23,7 @@ function setupEventListeners() {
     return;
   }
 
-  // Adding the options dynamically using the single source of truth [priorities] that is  located in utilis.js
+  // Adding the options dynamically using the single source of truth [priorities] located in utilis.js
 
   Object.keys(priorities).forEach((priority) => {
     prioritySelect.insertAdjacentHTML(
@@ -225,6 +224,7 @@ function displayTasks() {
     statisticsContainer.insertAdjacentHTML(
       "beforeend",
       `
+    <h2>Stats: </h2>
     ${
       topTask
         ? `<div class="stat-card">
@@ -233,20 +233,21 @@ function displayTasks() {
                   </div>`
         : ""
     }
+    
     <div class="stat-card">
-      <p>Total Tasks:</p>
+      <p>Total Tasks: </p>
       <p>${TaskManager.getTotalTasks()}</p>
     </div>
     <div class="stat-card">
-      <p>Total Tasks Completed :</p>
+      <p>Total Tasks Completed: </p>
       <p>${TaskManager.countCompletedTasks(0)}</p>
     </div>
     <div class="stat-card">
-      <p>Total Tasks Remaining :</p>
+      <p>Total Tasks Remaining: </p>
       <p>${TaskManager.getTotalIncompleteTasks()}</p>
     </div>
     <div class="stat-card">
-      <p>Average Task Priority:</p>
+      <p>Average Task Priority: </p>
       <p>${calculateAveragePriority(taskList.filter((task) => !task.parentId && !task.completed))}</p>
     </div>
     `,
