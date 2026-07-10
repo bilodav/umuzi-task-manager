@@ -1,60 +1,71 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=24113232&assignment_repo_type=AssignmentRepo)
-# Task Manager - JavaScript Starter Code
+# Task Manager
 
-This is the starter codebase for your JavaScript task management application. The code is approximately 70% complete but contains errors, omissions, and areas that need significant improvement.
+A vanilla JavaScript task management app built to demonstrate ES6+ fundamentals: classes and inheritance, functional array methods, destructuring/spread/rest, DOM manipulation with event delegation, localStorage persistence, and Jest testing.
 
-## What's Included
+## Overview
 
-- `app.js` - Core application logic (incomplete with errors)
-- `dom.js` - DOM manipulation code (incomplete with errors)
-- `index.html` - HTML structure (incomplete)
-- `app.test.js` - Jest tests (incomplete)
-- `package.json` - Project configuration
+Users can add tasks with a title, description, and priority; toggle completion; add subtasks under a parent task; filter/sort/search the list; and see live stats (total, completed, remaining, average priority). All state is persisted to `localStorage` and reloaded on page load.
 
-## Errors and Omissions
+## Errors Found (by category)
 
-The starter code contains intentional errors and missing features across all JavaScript topics including:
+- **Variables/Operators (8):** implicit global `taskList`, `var` instead of `let`/`const`, `==` instead of `===`, `=` instead of `===` in a conditional, missing `typeof` guards.
+- **Control Flow (7):** off-by-one `for` loop (`<=` instead of `<`), infinite `while` loop (missing increment), imperative loops used where `for...of` fit better.
+- **Functions (10):** `findTaskByTitle` missing its parameter entirely, recursive `countCompletedTasks` missing a base case, no pure functions, no higher-order function, no rest parameters.
+- **OOP (6):** `Task` missing `id` and `toggleCompletion()`, `Subtask` calling `this` before `super()`, `TaskManager` missing required methods.
+- **Modern JS (6):** no destructuring, no template literals (string concatenation instead), no spread/rest usage.
+- **DOM (8):** wrong selector syntax (`getElementById(".add-task-btn")`), no null checks, listeners attached before `DOMContentLoaded`, missing `preventDefault()`, no event delegation for dynamically-added elements.
+- **Testing (4):** no imports in the test file, no `beforeEach` reset, fewer than the required test count.
+- **Error Handling/Quality (3):** no `try/catch` anywhere, no input validation, `JSON.stringify`/`JSON.parse` missing from storage functions.
 
-- Variable scoping issues (var vs let vs const)
-- Missing error handling (try-catch blocks)
-- Incorrect operators and comparisons
-- Loop errors (for, while, for-of)
-- Missing array and object destructuring
-- No spread/rest operators
-- Missing template literals
-- Class and inheritance issues
-- Missing functional programming approaches
-- DOM selector errors
-- Event handling problems
-- Missing JSON operations
-- Incomplete Jest tests
-- Missing module exports/imports
+## Fixes Implemented
 
-## Your Task
+- Converted every `var` to `let`/`const`; replaced all `==`/`=` misuse with `===`.
+- Fixed the off-by-one loop and the missing-increment infinite loop; introduced `for...of` loops in task iteration.
+- Added the missing parameter to `findTaskByTitle`, rewritten with `Array.prototype.find`.
+- Added a base case to `countCompletedTasks` so the recursion terminates on an empty list.
+- Added `id` and `toggleCompletion()` to `Task`; fixed `Subtask` to call `super()` first.
+- Rebuilt `TaskManager` with additional methods: filtering, sorting, searching, subtask handling, and stats.
+- Replaced concatenation with template literals throughout `dom.js` and `app.js`.
+- Added object and array destructuring, spread (`[...this.tasks]` for non-mutating copies), and rest parameters (`mergeTaskLists(...taskArrays)`).
+- Corrected DOM selectors, added null checks before every DOM operation, moved initialization inside `DOMContentLoaded`, and delegated click handling on the task list container instead of binding listeners per task.
+- Implemented `JSON.stringify`/`JSON.parse` in `saveToStorage`/`loadFromStorage`, wrapped in `try/catch`.
 
-1. Review all code files carefully
-2. Identify and fix all errors
-3. Complete all missing requirements
-4. Add proper error handling
-5. Implement modern JavaScript features
-6. Write comprehensive tests
-7. Ensure code follows best practices
+## Features Added
 
-## Getting Started
+- ES6 classes with inheritance (`Task` → `Subtask`)
+- Functional array methods: `map`, `filter`, `reduce`, `find`
+- A custom higher-order function (`withValidation`) and pure functions (`calculateAveragePriority`, `formatTaskName`, `isHighPriority`)
+- Recursive completed-task counter with a proper base case
+- Destructuring (object, array, and function-parameter forms), spread, and rest operators
+- Event delegation for all task-card interactions (complete, delete, change priority, add subtask)
+- `localStorage` persistence via `JSON.stringify`/`JSON.parse`
+- 3 ES6 modules (`app.js`, `dom.js`, `utils.js`) with `import`/`export`
 
-1. Install dependencies: `npm install`
-2. Review all JavaScript files
-3. Run tests: `npm test` (they will fail initially)
-4. Fix errors and complete missing features
-5. Re-run tests until all pass
+## Running the Application
 
-## Testing
+1. Clone the repository and open `index.html` in a browser (or serve it with a local static server, e.g. `npx serve`).
+2. Add a task using the form; toggle, filter, sort, search, and delete tasks from the list.
 
-Run Jest tests with:
-```
+## Running the Tests
+
+```bash
+npm install
 npm test
 ```
 
-Initially, tests will fail or be incomplete. Fix the code and add missing tests.
+**Latest test run:** `Test Suites: 1 passed, 1 total` · `Tests: 25 passed, 25 total`
 
-Good luck!
+Test coverage includes: `Task` creation and methods, `Subtask` inheritance, `TaskManager` CRUD operations, recursive counting (including the empty-list edge case), filtering/sorting, and `calculateAveragePriority` (including empty-array and non-array edge cases).
+
+## Screenshots
+
+> Add your own screenshots to `screenshots/` and reference them here before submitting:
+
+- `app-running.png` — application running in the browser
+- `console-no-errors.png` — browser console with no errors
+- `tests-passing.png` — `npm test` output showing 25/25 passing
+- `dom-features.png` — filtering/sorting/subtasks working live
+
+## Reflection
+
+The trickiest bug was the recursive `countCompletedTasks` function — without a base case it would recurse past the end of the array and throw, so tracing the stack to find where `this.tasks[index]` became `undefined` was the key debugging step. The second challenge was untangling `TaskManager.tasks` as an alias for the exported `taskList` array: mutating one had to reliably mutate the other, which shaped how `removeTask` and the Jest `beforeEach` reset (`taskList.splice(0, taskList.length)`) were written.

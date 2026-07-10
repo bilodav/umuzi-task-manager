@@ -33,11 +33,11 @@ app.js - Errors Found (32 errors)
 21. `getInfo()` uses string concatenation instead of template literals
 22. `SubTask` calls `this` before `super()`
 23. `TaskManager` missing required additional methods.
-24. `TaskManager.tasks` aliases `taskList` become stale if reassigned @&@&@&@&&@&@@&@&@&@&@&@&&@&@@&&@&@@&@&@&
+24. `TaskManager.tasks` aliases `taskList` become stale if reassigned
 25. No template literals anywhere, project requires a minimum of 5
 26. No array destructuring demonstrated - project requires a minimum of 1
 27. No spread operator in `mergeTasks` 
-28. No ES6 module exports anywhere - A minimum of 3 is required for the project *************************
+28. No ES6 module exports anywhere - A minimum of 3 is required for the project 
 29. No input validation in `addTask`
 30. No typeof check in `updateTaskPriority` - A minimum of the is required across the project
 31. No empty array guard in `calculateAveragePriority`
@@ -79,7 +79,7 @@ app.test.js - Errors Found (4 errors)
 51. Only 2 partial test exist and a minimum 13 is required for the project.
 
 ================================================
-index.html - Errors Found (33 errors)
+index.html - Errors Found (3 errors)
 ================================================
 
 52. `dom.js` loads before `app.js` so the functions are called before they exist

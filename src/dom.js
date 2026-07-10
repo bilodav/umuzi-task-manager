@@ -14,14 +14,13 @@ function setupEventListeners() {
   displayTasks();
   // Corrected selector method
   const addButton = document.querySelector(".add-task-btn"); // Changed to querySelector
-  const taskInput = document.querySelector("#task-input"); // Added # ************************* DOES NOT EXIT IN DOM
   const prioritySelect = document.getElementById("priority");
   const taskListContainer = document.getElementById("task-list");
 
   // Added null checks before adding listeners
 
-  if (!addButton || !prioritySelect) {
-    console.log("missing button");
+  if (!addButton || !prioritySelect || !taskListContainer) {
+    console.log("missing elements");
     return;
   }
 
@@ -56,6 +55,13 @@ function setupEventListeners() {
         modal.classList.add("hidden");
       }
     });
+  });
+
+  document.addEventListener("input", (event) => {
+    if (event.target.id === "search-by-title") {
+      currentSearch = event.target.value;
+      displayTasks();
+    }
   });
 
   document.addEventListener("change", (event) => {
@@ -95,13 +101,23 @@ function handleAddTask(e) {
 
 let currentFilter = "all";
 let currentSort = "order-added";
+let currentSearch = "";
 
 function displayTasks() {
+  const filterListContainer = document.querySelector(".filter-task-section");
   const taskListContainer = document.getElementById("task-list");
   const statisticsContainer = document.querySelector(".statistics");
 
   // Added null check
-  if (!taskListContainer || !statisticsContainer) return;
+  if (!taskListContainer || !statisticsContainer || !filterListContainer)
+    return;
+
+  //Check if there are any tasks , and if so display the filter section
+  if (TaskManager.tasks.length) {
+    filterListContainer.classList.remove("hidden");
+  } else {
+    filterListContainer.classList.add("hidden");
+  }
 
   // Clearing existing content first
 
@@ -109,10 +125,18 @@ function displayTasks() {
   statisticsContainer.innerHTML = ``;
 
   // Filtering the main list to ensure only top level is rendering or else subtasks ends up being rendered too
-  const tasksToRender = TaskManager.getDisplayTasks(
-    currentFilter,
-    currentSort,
-  ).filter((task) => !task.parentId);
+  let tasksToRender;
+
+  if (currentSearch) {
+    tasksToRender = TaskManager.getSearchTask(currentSearch).filter(
+      (task) => !task.parentId,
+    );
+  } else {
+    tasksToRender = TaskManager.getDisplayTasks(
+      currentFilter,
+      currentSort,
+    ).filter((task) => !task.parentId);
+  }
 
   // using a for of loop
   for (const task of tasksToRender) {
@@ -193,12 +217,22 @@ function displayTasks() {
     );
   }
 
+  const topTask = TaskManager.getHighestPriorityTask();
+
   if (TaskManager.getTotalTasks() === 0) {
     statisticsContainer.innerHTML = ``;
   } else {
     statisticsContainer.insertAdjacentHTML(
       "beforeend",
       `
+    ${
+      topTask
+        ? `<div class="stat-card">
+                    <p>Next Highest Priority:</p>
+                    <p>${topTask.title}</p>
+                  </div>`
+        : ""
+    }
     <div class="stat-card">
       <p>Total Tasks:</p>
       <p>${TaskManager.getTotalTasks()}</p>
@@ -215,29 +249,6 @@ function displayTasks() {
       <p>Average Task Priority:</p>
       <p>${calculateAveragePriority(taskList.filter((task) => !task.parentId && !task.completed))}</p>
     </div>
-    <div class="filter-task-section">
-      <fieldset>
-      <label>Sort By:</label>
-        <select id="sort-by">
-          <option value="order-added">Order Added</option>
-          <option value="high">Highest Priority First</option>
-          <option value="low">Lowest Priority First</option>
-          <option value="done">Completed Tasks</option>
-          <option value="not-done">Uncompleted Tasks</option>
-        </select>
-      </fieldset>   
-      <fieldset>
-        <label>Filter By: </label>
-        <select id="filter-by">
-          <option value="all">All</option>
-          <option value="high">Highest Priority</option>
-          <option value="medium">Medium Priority</option>
-          <option value="low">Lowest Priority</option>
-          <option value="done">Completed Tasks</option>
-          <option value="not-done">Uncompleted Tasks</option>
-        </select>
-      </fieldset>
-      </div>
     `,
     );
     // After The DOM Rebuilds I keep losing the current state of my select buttons. In order to fix it I am restoring the values

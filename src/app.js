@@ -45,7 +45,7 @@ export class Subtask extends Task {
   }
 }
 
-// Used correct Loop *** can this be something more useful that printing the title to the console?
+// Used correct Loop
 export function displayAllTasks() {
   // Used for..of loop and of by one error automatically gone
   for (let task of taskList) {
@@ -53,76 +53,29 @@ export function displayAllTasks() {
   }
 }
 
-// Function missing parameter
-function findTaskByTitle() {
-  // Missing: title parameter
-  // Wrong loop construct
-  var i = 0;
-  while (i < taskList.length) {
-    if (taskList[i].title === title) {
-      // Fixed issue of using ==
-      return taskList[i];
-    }
-    i++;
-  }
-  return undefined;
-}
-
 // This is used in dom.js on load to restore saved tasks
 export function loadTasks() {
   const savedTasks = loadFromStorage();
-  savedTasks.forEach((item) => {
-    // const task = new Task(item.title, item.description, item.priority); // convert back to task instances from the plain JS objects
-    try {
-      let task;
-      // check if the task has a parent id property to determine if it is a subtask
-      if (item.parentId !== undefined && item.parentId !== null) {
-        task = new Subtask(
-          item.title,
-          item.description,
-          item.priority,
-          item.parentId,
-        );
-      } else {
-        task = new Task(item.title, item.description, item.priority);
+  // destructure for ease of use
+  savedTasks.forEach(
+    ({ title, description, priority, completed, id, parentId }) => {
+      try {
+        let task;
+        // check if the task has a parent id property to determine if it is a subtask
+        if (parentId !== undefined && parentId !== null) {
+          task = new Subtask(title, description, priority, parentId);
+        } else {
+          task = new Task(title, description, priority);
+        }
+        task.id = id; // set ID to old ID as opposed to generating a new one
+        task.completed = completed;
+        taskList.push(task);
+      } catch (error) {
+        console.error("Skipped a corruted saved task:", error.message);
       }
-      task.id = item.id; // set ID to old ID as opposed to generating a new one
-      task.completed = item.completed;
-      taskList.push(task);
-    } catch (error) {
-      console.error("Skipped a corruted saved task:", error.message);
-    }
-  });
+    },
+  );
 }
-
-// // Function that should use destructuring but doesn't
-// function getTaskDetails(task) {
-//   // Should destructure task properties
-//   var title = task.title;
-//   var description = task.description;
-//   var priority = task.priority;
-//   var completed = task.completed;
-
-//   return {
-//     title: title,
-//     description: description,
-//     priority: priority,
-//     completed: completed,
-//   };
-// }
-
-// // Function missing spread/rest operators
-// function mergeTasks(list1, list2) {
-//   // Should use spread operator
-//   var merged = [];
-//   for (var i = 0; i < list1.length; i++) {
-//     merged.push(list1[i]);
-//   }
-//   for (var i = 0; i < list2.length; i++) {
-//     merged.push(list2[i]);
-//   }
-//   return merged;
-// }
 
 export function calculateAveragePriority(tasks) {
   //Ensure that tasks is actually an array and that it is greater than 0
@@ -131,24 +84,12 @@ export function calculateAveragePriority(tasks) {
   return Number(total / tasks.length).toFixed(2);
 }
 
-// // Filter function with errors
-// function getHighPriorityTasks(minPriority) {
-//   var highPriority = [];
-//   // Should use array methods (filter)
-//   for (var i = 0; i < taskList.length; i++) {
-//     if (taskList[i].priority > minPriority) {
-//       highPriority.push(taskList[i]);
-//     }
-//   }
-//   return highPriority;
-// }
+function createPriorityFilter(priority) {
+  return (task) => task.priority === priority;
+}
 
-// Object with missing methods
 export const TaskManager = {
   tasks: taskList,
-
-  // Missing: method to add task using functional approach
-  // Missing: method using array methods (map, filter, reduce)
 
   addTask(title, description, priority) {
     try {
@@ -174,6 +115,12 @@ export const TaskManager = {
     }
   },
 
+  addMultipleTasks(...tasksData) {
+    return tasksData.map(([title, description, priority]) =>
+      this.addTask(title, description, priority),
+    );
+  },
+
   removeTask(taskId) {
     // First I find all the ids I need to remove
     const idsToRemove = this.tasks
@@ -194,17 +141,16 @@ export const TaskManager = {
   },
 
   updateTaskPriority(taskId, newPriority) {
-    // Missing: typeof check for parameters
-    // Missing: null/undefined validation
+    // Added typeof check for parameters
+    // Added null/undefined validation
 
     if (typeof newPriority !== "string" || !priorities[newPriority]) {
       console.error("Invalid property value");
       return false;
     }
-    for (let i = 0; i < this.tasks.length; i++) {
-      if (this.tasks[i].id === Number(taskId)) {
-        // Operator fixed (=== instead of =)
-        this.tasks[i].priority = newPriority;
+    for (let task of this.tasks) {
+      if (task.id === Number(taskId)) {
+        task.priority = newPriority;
         saveToStorage(this.tasks);
         return true;
       }
@@ -220,10 +166,8 @@ export const TaskManager = {
     const completedList = this.tasks.filter((task) => task.completed === true);
     return completedList.length;
   },
-  //Added count COmpleted tasks here in the taskManager too, waiting on clarification I think its better here, ensuring it can call itself
   countCompletedTasks(index = 0) {
     // Added base case check
-    // Missing: null/undefined check
     if (index === this.tasks.length) return 0;
 
     if (this.tasks[index].completed) {
@@ -236,6 +180,16 @@ export const TaskManager = {
   getTotalIncompleteTasks() {
     const completedList = this.tasks.filter((task) => task.completed === false);
     return completedList.length;
+  },
+
+  getSearchTask(filterby) {
+    if (!filterby || filterby === "") {
+      return [...this.tasks]; // spread to not mutate the original array
+    }
+
+    return this.tasks.filter((task) =>
+      task.title.toLowerCase().includes(filterby.toLowerCase()),
+    );
   },
 
   getFilteredTasks(filterby) {
@@ -253,10 +207,19 @@ export const TaskManager = {
     }
 
     if (filterby === "low" || filterby === "medium" || filterby === "high") {
-      return this.tasks.filter((task) => task.priority === filterby);
+      return this.tasks.filter(createPriorityFilter(filterby));
     }
 
     return [...this.tasks]; //fallback incase some other filter slips through
+  },
+
+  getHighestPriorityTask() {
+    if (this.tasks.length === 0) return null;
+    const sorted = this.sortTasks(this.tasks, "high").filter(
+      (task) => !task.parentId && !task.completed,
+    );
+    const [topTask] = sorted;
+    return topTask;
   },
 
   sortTasks(tasks, sortBy) {

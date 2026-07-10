@@ -280,12 +280,12 @@ h6 {
 
 h1 {
   font-weight: var(--font-weight-bold);
-  font-size: 2.5rem;
+  font-size: 1.8rem;
 }
 
 h2 {
   font-weight: var(--font-weight-semibold);
-  font-size: 2rem;
+  font-size: 1.65rem;
 }
 
 h3 {
@@ -316,7 +316,7 @@ body {
   background-color: var(--btn-primary-bg);
   color: var(--btn-primary-text);
   border: none;
-  height: 48px;
+  height: 30px;
   width: 120px;
   padding: 0 var(--spacing-md);
   border-radius: var(--radius-md);
@@ -438,12 +438,13 @@ body {
     width: 90%;
     margin: 0 auto;
     column-gap: 5px;
+    row-gap: 4px;
     min-height: 100vh;
+    align-content: start;
   }
 
   h1 {
-    margin-top: 2vh;
-    margin-bottom: 0;
+    margin: 0;
     text-align: center;
     grid-column: 1/2;
   }
@@ -454,11 +455,11 @@ body {
     grid-template-columns: 3fr 1fr;
     grid-template-rows: auto;
     height: 100vh;
+    align-content: center;
   }
 
   h1 {
     grid-column: 1/3;
-    margin-top: 3vh;
   }
 }
 
@@ -500,10 +501,6 @@ body {
     justify-content: flex-start;
   }
 
-  .add-task-form .add-task-btn {
-    justify-self: flex-end;
-  }
-
   select,
   input {
     padding: 0;
@@ -535,9 +532,9 @@ body {
   input,
   select {
     background-color: var(--bg-primary);
-    padding: 10px;
+    padding: 8px;
     padding-left: 20px;
-    height: 50px;
+    height: 35px;
     font-size: 14px;
     border-radius: var(--radius-md);
     border: none;
@@ -566,7 +563,8 @@ body {
   }
   .add-task-form {
     flex-direction: row;
-    gap: 15px;
+    gap: 10px;
+    width: 75%;
   }
 
   .add-task-input {
@@ -582,7 +580,65 @@ body {
   }
 }
 
+/* ___________________________________________________________________________________________________ */
+/* ----------------------------------- FILTER TASK CONTAINER -------------------------------------------- */
+/* ___________________________________________________________________________________________________ */
+
+/* Small devices (Phones, 300px and up) - media query - for good responsiveness */
+@media (min-width: 300px) {
+  .filter-task-section {
+    grid-column: 1/2;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: flex-start;
+
+    gap: 5px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius-lg);
+    padding: 10px 20px 10px;
+  }
+
+  .filter-task-section fieldset {
+    display: flex;
+    flex-direction: column;
+  }
+  .filter-task-section label {
+    font-weight: var(--font-weight-semibold);
+    font-size: 0.85rem;
+  }
+  #filter-by,
+  #sort-by {
+    width: 180px;
+  }
+}
+
+/* Medium devices (tablets, 768px and up) - media query - for good responsiveness  */
+@media (min-width: 768px) {
+  .filter-task-section {
+    grid-column: 1/3;
+    flex-direction: row;
+    gap: 35px;
+  }
+
+  .filter-task-section fieldset {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Large devices (desktops, 992px and up) - media query - for good responsiveness  */
+@media (min-width: 992px) {
+  .add-task-input {
+    width: 35%;
+  }
+}
+
+/* _____________________________________________________________________________________________________ */
 /* ----------------------------------- TASK LIST CONTAINER -------------------------------------------- */
+/* _____________________________________________________________________________________________________ */
 
 .task-list:not(:has(.task-card)) {
   display: none;
@@ -593,7 +649,6 @@ body {
   display: flex;
   flex-direction: column;
   max-height: 68vh;
-  margin-top: 2vh;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-dark);
   border-radius: var(--radius-lg);
@@ -602,7 +657,9 @@ body {
   gap: 10px;
 }
 
+/* _____________________________________________________________________________________________________ */
 /* ----------------------------------- TASK CARD -------------------------------------------- */
+/* _____________________________________________________________________________________________________ */
 
 .task-card {
   padding: 10px;
@@ -701,7 +758,9 @@ body {
   cursor: pointer;
 }
 
+/* _____________________________________________________________________________________________________ */
 /* ----------------------------------- SUB TASK-------------------------------------------- */
+/* _____________________________________________________________________________________________________ */
 
 .subtask-input {
   width: 80%;
@@ -790,7 +849,9 @@ body {
   color: var(--btn-secondary-hover-text);
 }
 
+/* _____________________________________________________________________________________________________ */
 /* ----------------------------------- STATISTICS CONTAINER -------------------------------------------- */
+/* _____________________________________________________________________________________________________ */
 
 /* Small devices (Phones, 300px and up) - media query - for good responsiveness */
 @media (min-width: 300px) {
@@ -803,7 +864,6 @@ body {
     display: flex;
     flex-direction: column;
     height: auto;
-    margin-top: 2vh;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-dark);
     border-radius: var(--radius-lg);
@@ -827,84 +887,63 @@ body {
     font-size: 0.9rem;
   }
 
-  .filter-task-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 85%;
-    margin: 10px auto;
+  /* Medium devices (tablets, 768px and up) - media query - for good responsiveness  */
+  @media (min-width: 768px) {
+    .statistics {
+      grid-column: 2/3;
+      height: 72vh;
+    }
   }
 
-  .filter-task-section fieldset {
-    width: 85%;
-    display: flex;
-    flex-wrap: wrap;
+  /* _____________________________________________________________________________________________________ */
+  /* ---------------------------------------- GENRAL STYLINGS -------------------------------------------- */
+  /* _____________________________________________________________________________________________________ */
+
+  .priority-medium {
+    color: orange;
   }
 
-  .filter-task-section label {
-    font-weight: var(--font-weight-semibold);
-    font-size: 0.85rem;
+  .priority-high {
+    color: red;
   }
 
-  .filter-task-section select {
-    min-width: 150px;
-    width: 80%;
+  .green {
+    color: green;
   }
-}
 
-/* Medium devices (tablets, 768px and up) - media query - for good responsiveness  */
-@media (min-width: 768px) {
-  .statistics {
-    grid-column: 2/3;
-    height: 72vh;
+  .hidden {
+    visibility: hidden;
   }
-}
 
-/* ----------------------------------- GENRAL STYLINGS-------------------------------------------- */
-
-.priority-medium {
-  color: orange;
-}
-
-.priority-high {
-  color: red;
-}
-
-.green {
-  color: green;
-}
-
-.hidden {
-  visibility: hidden;
-}
-
-.d-hidden {
-  display: none;
-}
-
-/* ----------------------------------- ANIMATIONS-------------------------------------------- */
-
-/* Wobble animation */
-@keyframes wobble {
-  0% {
-    transform: translateX(0%);
+  .d-hidden {
+    display: none;
   }
-  15% {
-    transform: translateX(-15%) rotate(-4deg);
-  }
-  30% {
-    transform: translateX(10%) rotate(2deg);
-  }
-  45% {
-    transform: translateX(-5%) rotate(-2deg);
-  }
-  60% {
-    transform: translateX(5%) rotate(1deg);
-  }
-  75% {
-    transform: translateX(-1%) rotate(-1deg);
-  }
-  100% {
-    transform: translateX(0%);
+  /* _____________________________________________________________________________________________________ */
+  /* ------------------------------------------ ANIMATIONS ----------------------------------------------- */
+  /* _____________________________________________________________________________________________________ */
+
+  /* Wobble animation */
+  @keyframes wobble {
+    0% {
+      transform: translateX(0%);
+    }
+    15% {
+      transform: translateX(-15%) rotate(-4deg);
+    }
+    30% {
+      transform: translateX(10%) rotate(2deg);
+    }
+    45% {
+      transform: translateX(-5%) rotate(-2deg);
+    }
+    60% {
+      transform: translateX(5%) rotate(1deg);
+    }
+    75% {
+      transform: translateX(-1%) rotate(-1deg);
+    }
+    100% {
+      transform: translateX(0%);
+    }
   }
 }

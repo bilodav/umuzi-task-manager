@@ -14,11 +14,50 @@
         <h2>Add New Task</h2>
         <!-- Form with issues -->
         <form class="add-task-form">
-          <input type="text" id="title" placeholder="Task Title" />
-          <input type="text" id="description" placeholder="Description" />
+          <input
+            class="add-task-input"
+            type="text"
+            id="title"
+            placeholder="Task Title"
+          />
+          <input
+            class="add-task-input"
+            type="text"
+            id="description"
+            placeholder="Description"
+          />
           <select id="priority"></select>
           <button class="add-task-btn">Add Task</button>
         </form>
+      </div>
+      <div class="filter-task-section hidden">
+        <fieldset>
+          <label>Search by Main Task Title:</label>
+          <form>
+            <input id="search-by-title" placeholder="Search here" />
+          </form>
+        </fieldset>
+        <fieldset>
+          <label>Sort By:</label>
+          <select id="sort-by">
+            <option value="order-added">Order Added</option>
+            <option value="high">Highest Priority First</option>
+            <option value="low">Lowest Priority First</option>
+            <option value="done">Completed Tasks</option>
+            <option value="not-done">Uncompleted Tasks</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <label>Filter By: </label>
+          <select id="filter-by">
+            <option value="all">All</option>
+            <option value="high">Highest Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="low">Lowest Priority</option>
+            <option value="done">Completed Tasks</option>
+            <option value="not-done">Uncompleted Tasks</option>
+          </select>
+        </fieldset>
       </div>
       <div class="task-list" id="task-list">
         <!-- Tasks will be displayed here -->
