@@ -2,6 +2,8 @@
 
 This project is a Task Management App that is built using vanilla JavaScript, to demonstrate my understanding of ES6+ fundamentals such as, classes and inheritance, functional array methods, destructuring/spread/rest, DOM manipulation with event delegation, localStorage persistance, and Jest testing.
 
+You can visit the Live URL here: https://bilodav.github.io/umuzi-task-manager
+
 ## Overview
 
 In my application, Users can add tasks with a title, description and priority that can be altered after initialisation and also toggle completion. Under each task they can add a subtask that can be deleted or toggle completion. Filters like Sort, Search and Filter manages the task list according to what the user eants to see. The app also features live stats like total tasks, total completed tasks, average priority and more. All state is persisted to `localStorage` and reloaded on page load. The app is plit into three ES6 modules namely, `utilis.js`, `app.js` and `dom.js` plus a Jest test suite that covers the app's core logic.
@@ -35,7 +37,7 @@ In my application, Users can add tasks with a title, description and priority th
 
 - ES6 classes with inheritance (`Task` → `Subtask`)
 - Functional array methods: `map`, `filter`, `reduce`, `find`
-- A custom higher-order function (`withValidation`) and pure functions (`calculateAveragePriority`, `formatTaskName`, `isHighPriority`)
+- A custom higher-order function (`createPriorityFilter`) and pure functions (`calculateAveragePriority`)
 - Recursive completed-task counter with the correct base case
 - Destructuring (object, array, and function-parameter forms), spread, and rest operators
 - Event delegation for all task-card interactions (complete, delete, change priority, add subtask)
@@ -62,7 +64,7 @@ The test coverage includes: `Task` creation and methods, `Subtask` inheritance, 
 
 - `app-running.png` — application running in the browser
 - `console-no-errors.png` — browser console with no errors
-- `tests-passing.png` — `npm test` output showing 25/25 passing
+- `tests-passing.png` — `npm test` output showing 31/31 passing
 - `dom-features.png` — filtering/sorting/subtasks working live
 
 ### Application running in the browser
@@ -104,6 +106,8 @@ The test coverage includes: `Task` creation and methods, `Subtask` inheritance, 
 #### Searching for tasks by **title**
 
 ![Searching by title](./screenshots/search-filtering.png)
+
+## Reflection
 
 ## Reflection
 

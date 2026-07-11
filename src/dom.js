@@ -77,7 +77,6 @@ function setupEventListeners() {
 }
 
 function handleAddTask(e) {
-  console.log("I Clicked Add Task");
   e.preventDefault();
   const titleInput = document.getElementById("title");
   const descInput = document.getElementById("description");
@@ -306,15 +305,13 @@ function handleTaskClick(event) {
 
   // Check if I am clicking the li element in my modal
   if (event.target.tagName === "LI") {
-    console.log("clicked");
     TaskManager.updateTaskPriority(taskId, event.target.dataset.value);
     event.target.parentElement.classList.toggle("hidden");
     displayTasks();
   }
 
-  //Check if I am clicking add subtas unhide the form and add the task
+  //Check if I am clicking add subtask unhide the form and add the task
   if (event.target.classList.contains("add-subtask-btn")) {
-    console.log("come back here");
     event.target.nextElementSibling.classList.toggle("hidden");
   }
 
@@ -354,7 +351,5 @@ function handleTaskClick(event) {
   console.log(`Task clicked: ${taskId}`);
 }
 
-// Initialize (wrong placement - should use DOMContentLoaded)
+// Initialize
 document.addEventListener("DOMContentLoaded", setupEventListeners);
-
-// this is dom.js

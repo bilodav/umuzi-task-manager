@@ -9,7 +9,6 @@ import {
 
 // Global variables
 export const taskList = []; // Added const as it will always be an array
-let taskCounter = 0; // Used let
 
 // Task class with errors
 export class Task {
@@ -106,9 +105,7 @@ export const TaskManager = {
       }
       const newTask = new Task(title, description, priority); // changed to const
       this.tasks.push(newTask);
-      taskCounter++;
       saveToStorage(this.tasks);
-      console.log(taskCounter);
       return newTask;
     } catch (error) {
       console.error("Could not add task:", error.message);
@@ -136,7 +133,6 @@ export const TaskManager = {
         this.tasks.splice(i, 1);
       }
     }
-    taskCounter--;
     saveToStorage(this.tasks);
   },
 
@@ -282,5 +278,3 @@ export const TaskManager = {
     return newSubtask;
   },
 };
-
-// This is app.js
