@@ -146,10 +146,40 @@ describe("TaskManager.addMultipleTasks", () => {
 });
 
 // -------------------------------
+// TaskManager.removeMultipleTasks
+// -------------------------------
+describe("TaskManager.removeMultipleTasks", () => {
+  test("Calling addMultipleTasks should remove several tasks at once", () => {
+    const a = TaskManager.addTask("Task A", "description", "low");
+    const b = TaskManager.addTask("Task B", "description", "medium");
+    TaskManager.addTask("Task C", "description", "high");
+
+    TaskManager.removeMultipleTasks(a.id, b.id);
+
+    expect(TaskManager.tasks).toHaveLength(1);
+    expect(TaskManager.tasks[0].title).toBe("Task C");
+  });
+});
+
+// -------------------------------
 // TaskManager.removeTask
 // -------------------------------
 
 describe("TaskManager.removeTask", () => {
+  // Edge Case check as per feedback: invalid/non-numeric id should be rejected and not silently ignored
+  test("Should reject an invalid task id and leave the list unchanged", () => {
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    TaskManager.addTask("Task 1", "Some description", "medium");
+    const result = TaskManager.removeTask("not-a-real-id");
+
+    expect(result).toBe(false);
+    expect(TaskManager.tasks).toHaveLength(1);
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+
   test("Should remove a task by its id", () => {
     const task = TaskManager.addTask("Task 1", "Some description", "medium");
     TaskManager.removeTask(task.id);
@@ -172,6 +202,64 @@ describe("TaskManager.removeTask", () => {
     expect(TaskManager.tasks).toHaveLength(2);
     TaskManager.removeTask(parentTask.id);
     expect(TaskManager.tasks).toHaveLength(0);
+  });
+});
+
+// -------------------------------
+// TaskManager.addSubtask
+// -------------------------------
+
+describe("TaskManager.addSubtask", () => {
+  test("Should add a subtask to a valid parent task", () => {
+    const parent = TaskManager.addTask("Parent", "description", "medium");
+    const sub = TaskManager.addSubtask(
+      "Child",
+      "description",
+      "low",
+      parent.id,
+    );
+
+    expect(sub).not.toBeNull();
+    expect(sub.parentId).toBe(parent.id);
+    expect(TaskManager.tasks).toHaveLength(2);
+  });
+
+  // Edge case: an invalid priority must be rejected, same as addTask
+  test("Should reject an invalid priority and not add the subtask", () => {
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const parent = TaskManager.addTask("Parent", "description", "medium");
+    const result = TaskManager.addSubtask(
+      "Child",
+      "description",
+      "urgent",
+      parent.id,
+    );
+
+    expect(result).toBeNull();
+    expect(TaskManager.tasks).toHaveLength(1);
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+
+  // Edge case: a non-string/empty title must be rejected rather than throwing
+  test("Should reject a missing title without throwing", () => {
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const parent = TaskManager.addTask("Parent", "description", "medium");
+    const result = TaskManager.addSubtask(
+      undefined,
+      "description",
+      "low",
+      parent.id,
+    );
+
+    expect(result).toBeNull();
+    expect(TaskManager.tasks).toHaveLength(1);
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
   });
 });
 

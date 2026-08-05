@@ -36,7 +36,7 @@ In my application, Users can add tasks with a title, description and priority th
 ## Features Added
 
 - ES6 classes with inheritance (`Task` → `Subtask`)
-- Functional array methods: `map`, `filter`, `reduce`, `find`
+- Functional array methods: `map`, `filter`, `reduce`, `find` and more
 - A custom higher-order function (`createPriorityFilter`) and pure functions (`calculateAveragePriority`)
 - Recursive completed-task counter with the correct base case
 - Destructuring (object, array, and function-parameter forms), spread, and rest operators
@@ -56,7 +56,7 @@ npm install
 npm test
 ```
 
-**Latest test run:** `Test Suites: 1 passed, 1 total` · `Tests: 31 passed, 31 total`
+**Latest test run:** `Test Suites: 1 passed, 1 total` · `Tests: 36 passed, 36 total`
 
 The test coverage includes: `Task` creation and methods, `Subtask` inheritance, `TaskManager` CRUD operations, recursive counting (including the empty-list edge case), filtering/sorting, and `calculateAveragePriority` (including empty-array and non-array edge cases).
 
@@ -64,7 +64,7 @@ The test coverage includes: `Task` creation and methods, `Subtask` inheritance, 
 
 - `app-running.png` — application running in the browser
 - `console-no-errors.png` — browser console with no errors
-- `tests-passing.png` — `npm test` output showing 31/31 passing
+- `tests-passing.png` — `npm test` output showing 36/36 passing
 - `dom-features.png` — filtering/sorting/subtasks working live
 
 ### Application running in the browser
@@ -81,7 +81,7 @@ The test coverage includes: `Task` creation and methods, `Subtask` inheritance, 
 
 ![Console With No Errors](./screenshots/console-no-errors.png)
 
-### Output showing 31/31 tests passing
+### Output showing 36/36 tests passing
 
 ![Jest Output](./screenshots/jest-output.png)
 

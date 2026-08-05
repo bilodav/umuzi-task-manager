@@ -1,9 +1,18 @@
 // Utilities - Starter Code
 
 export const priorities = { low: 1, medium: 2, high: 3 };
+/**
+ * Persists an array of tasks to localStorage in JSON format.
+ * @param {Array<Object>} data - The array of task objects to save.
+ * @returns {void}
+ */
 
 export function saveToStorage(data) {
-  // Fixed now converting to JSON
+  // Added: validate shape before writing, so a bad call site can't silently corrupt storage
+  if (!Array.isArray(data)) {
+    console.error("saveToStorage: expected an array, but got", typeof data);
+    return;
+  }
   try {
     localStorage.setItem("tasks", JSON.stringify(data));
   } catch (error) {
@@ -11,6 +20,10 @@ export function saveToStorage(data) {
   }
 }
 
+/**
+ * Loads and parses the saved task array from localStorage.
+ * @returns {Array<Object>} The parsed tasks, or an empty array if none exist or the parsing fails.
+ */
 export function loadFromStorage() {
   // Fixed now parsing JSON
   try {
@@ -22,25 +35,25 @@ export function loadFromStorage() {
   }
 }
 
-// function generateRandomId() {
-//   return Math.floor(Math.random() * 10000); // FIXED - Bug: Returns decimal, not integer
-// }
-// Better way for edge cases where app gets bigger than the fixed amount or getting the same random number twice
-
+/**
+ * Generates a unique ID based on the current timestamp in milliseconds.
+ * @returns {number}
+ */
 export function generateRandomId() {
   return Date.now();
 }
 
+/**
+ * Capitalizes and trims a task-related label for display (e.g. priority names).
+ * @param {string} name - The raw string to be formatted.
+ * @returns {string} The formatted string, or "Unknown" if input is invalid.
+ */
 export function formatTaskName(name) {
+  // Added guard so that the app won't crash the render loop on a missing/invalid value
+  if (typeof name !== "string" || name.trim() === "") {
+    return "Unknown";
+  }
   // Fixed Bug: string methods used properly
   const result = name.trim().charAt(0).toUpperCase() + name.trim().slice(1);
   return result; // Now Capitalizes, trim, etc.
-}
-
-export function isHighPriority(task) {
-  if (task.priority === "high") {
-    // Fixed now Using ===
-    return true; // Fixed now returns boolean
-  }
-  return false;
 }

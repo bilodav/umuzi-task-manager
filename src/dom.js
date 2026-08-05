@@ -19,7 +19,7 @@ function setupEventListeners() {
   // Added null checks before adding listeners
 
   if (!addButton || !prioritySelect || !taskListContainer) {
-    console.log("missing elements");
+    console.error("setupEventListeners: required DOM elements not found");
     return;
   }
 
@@ -180,9 +180,9 @@ function displayTasks() {
               <span class="change-status-btn" title="Change Status">⌄</span>
               <div class="task-card-modal-select hidden ">
                 <ol>
-                  <li data-id=${id} data-value="low">Low</li>
-                  <li data-id=${id} data-value="medium">Medium</li>
-                  <li data-id=${id} data-value="high">High</li>
+                  <li class="priority-option" data-id=${id} data-value="low">Low</li>
+                  <li class="priority-option" data-id=${id} data-value="medium">Medium</li>
+                  <li class="priority-option" data-id=${id} data-value="high">High</li>
                 </ol>
               </div>
             </div>
@@ -260,95 +260,97 @@ function displayTasks() {
   }
 }
 
+// A helper function t o centralize the "perform an action then re render" pattern so displayTasks() is not repeated everytime state changes as per the feedback recieved
+function rerenderAfter(action) {
+  action();
+  displayTasks();
+}
+
 function handleTaskClick(event) {
   const { id: taskId } = event.target.dataset; // Getting the task id per button as set using Object Destructuring
 
   if (event.target.classList.contains("completed-btn")) {
-    // First I find where the taskList item matches the current btn's ID then save to a variable
-    const task = TaskManager.tasks.find(
-      (task) => task.id === Number(taskId), // converting to Number because HTML only saves strings
+    //Search if a subtask belonging to this task isnt completed yet
+    const hasIncompletedSubtask = TaskManager.tasks.some(
+      (t) => t.parentId === Number(taskId) && !t.completed,
     );
 
-    //Search if a subtask belonging to this task isnt completed yet
-    let hasIncompletedSubtask = false;
-    for (let i = 0; i < TaskManager.tasks.length; i++) {
-      if (
-        TaskManager.tasks[i].parentId === Number(taskId) &&
-        !TaskManager.tasks[i].completed
-      ) {
-        hasIncompletedSubtask = true;
-        break;
-      }
-    }
-
     if (hasIncompletedSubtask) {
-      event.target.nextElementSibling.classList.remove("d-hidden");
+      //Added a defensive null check using optional chaining, as nextElementSibling is not guaranteed to exist
+      event.target.nextElementSibling?.classList.remove("d-hidden");
       setTimeout(() => {
-        event.target.nextElementSibling.classList.add("d-hidden");
+        event.target.nextElementSibling?.classList.add("d-hidden");
       }, 5000);
       return;
     }
 
-    task.toggleCompletion(); // class handles the logic here of setting the completion status
-    displayTasks(); //re-render my screen
+    rerenderAfter(() => TaskManager.toggleTaskCompletion(taskId));
+    return;
   }
 
   if (event.target.classList.contains("delete-btn")) {
-    TaskManager.removeTask(taskId);
-    displayTasks(); //re-render my screen
+    rerenderAfter(() => TaskManager.removeTask(taskId));
+    return;
   }
 
   // Check to see if status button is clicked, and then toggle hidden class the next sibling on the parent element
   if (event.target.classList.contains("change-status-btn")) {
     event.target.nextElementSibling.classList.toggle("hidden");
+    return;
   }
 
-  // Check if I am clicking the li element in my modal
-  if (event.target.tagName === "LI") {
-    TaskManager.updateTaskPriority(taskId, event.target.dataset.value);
-    event.target.parentElement.classList.toggle("hidden");
-    displayTasks();
+  // Fixed this so that it is scoped by class and not tagName, subtask <li> elements share the same tag and were incorrectly matching this branch too
+  if (event.target.classList.contains("priority-option")) {
+    rerenderAfter(() => {
+      TaskManager.updateTaskPriority(taskId, event.target.dataset.value);
+      event.target.parentElement.classList.toggle("hidden");
+    });
+    return;
   }
 
   //Check if I am clicking add subtask unhide the form and add the task
   if (event.target.classList.contains("add-subtask-btn")) {
-    event.target.nextElementSibling.classList.toggle("hidden");
+    //Added a defensive null check using optional chaining, as nextElementSibling is not guaranteed to exist
+    event.target.nextElementSibling?.classList.toggle("hidden");
+    return;
   }
 
   if (event.target.classList.contains("add-subtask-submit")) {
     event.preventDefault();
     const form = event.target.closest("form");
     const input = form.querySelector(".subtask-title-input");
+
+    // Added defensive null check to bail out cleanly if the expected form/input aren't found
+    if (!form || !input) {
+      console.error("Could not find the subtask form or input");
+      return;
+    }
+
     const parentId = form.dataset.parentId;
     const parentTask = TaskManager.tasks.find(
       (task) => task.id === Number(parentId),
     );
 
-    TaskManager.addSubtask(input.value, "", parentTask.priority, parentId);
+    rerenderAfter(() => {
+      TaskManager.addSubtask(input.value, "", parentTask?.priority, parentId);
+      form.classList.add("hidden");
+    });
 
-    form.classList.add("hidden");
-    displayTasks();
+    return;
   }
 
   if (event.target.classList.contains("complete-subtask")) {
     const subtaskId = event.target.dataset.id;
 
-    // First I find where the taskList item matches the current btn's ID then save to a variable
-    const task = TaskManager.tasks.find(
-      (task) => task.id === Number(subtaskId), // converting to Number because HTML only saves strings
-    );
-
-    task.toggleCompletion();
-    displayTasks();
+    rerenderAfter(() => TaskManager.toggleTaskCompletion(subtaskId));
+    return;
   }
 
   if (event.target.classList.contains("rmv-subtask")) {
     const subtaskId = event.target.dataset.id;
-    TaskManager.removeTask(subtaskId);
-    displayTasks();
+    rerenderAfter(() => TaskManager.removeTask(subtaskId));
+    return;
   }
-
-  console.log(`Task clicked: ${taskId}`);
 }
 
 // Initialize

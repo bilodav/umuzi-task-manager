@@ -10,7 +10,9 @@ import {
 // Global variables
 export const taskList = []; // Added const as it will always be an array
 
-// Task class with errors
+/**
+ * Represents a single task with a title, id, description, priority, and completion state.
+ */
 export class Task {
   constructor(title, description, priority) {
     this.title = title;
@@ -28,11 +30,12 @@ export class Task {
   // Added method to toggle completion
   toggleCompletion() {
     this.completed = !this.completed;
-    saveToStorage(taskList);
   }
 }
 
-// Subtask class with fixed inheritance issues
+/**
+ * A Task that belongs to a parent Task, identified by the parentId.
+ */
 export class Subtask extends Task {
   constructor(title, description, priority, parentId) {
     // Added super() call
@@ -59,6 +62,12 @@ export function loadTasks() {
   savedTasks.forEach(
     ({ title, description, priority, completed, id, parentId }) => {
       try {
+        // Added validation: reject corrupted saved tasks witha bad priority
+        if (!priorities[priority]) {
+          {
+            throw new Error(`Invalid saved priority: ${priority}`);
+          }
+        }
         let task;
         // check if the task has a parent id property to determine if it is a subtask
         if (parentId !== undefined && parentId !== null) {
@@ -79,7 +88,10 @@ export function loadTasks() {
 export function calculateAveragePriority(tasks) {
   //Ensure that tasks is actually an array and that it is greater than 0
   if (!Array.isArray(tasks) || tasks.length === 0) return 0;
-  const total = tasks.reduce((sum, task) => sum + priorities[task.priority], 0);
+  const total = tasks.reduce(
+    (sum, task) => sum + (priorities[task.priority] ?? 0),
+    0,
+  );
   return Number(total / tasks.length).toFixed(2);
 }
 
@@ -87,9 +99,20 @@ function createPriorityFilter(priority) {
   return (task) => task.priority === priority;
 }
 
+function createSearchMatch(searchTerm) {
+  const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  return (task) => task.title.toLowerCase().includes(lowerCaseSearchTerm);
+}
+
 export const TaskManager = {
   tasks: taskList,
-
+  /**
+   * Creates and stores a new Task after validating all its fields.
+   * @param {string} title - The task title (required, non-empty).
+   * @param {string} description - The task description.
+   * @param {string} priority - One of "low" | "medium" | "high".
+   * @returns {Task|undefined} The created Task, or undefined if validation failed.
+   */
   addTask(title, description, priority) {
     try {
       if (typeof title !== "string" || title.trim() === "") {
@@ -113,12 +136,38 @@ export const TaskManager = {
   },
 
   addMultipleTasks(...tasksData) {
+    // Added a /every check to validate the whole batch up front
+    const allValid = tasksData.every(
+      ([title, description, priority]) =>
+        typeof title === "string" &&
+        title.trim() !== "" &&
+        typeof description === "string" &&
+        !!priorities[priority],
+    );
+
+    if (!allValid) {
+      console.error(
+        "addMultipleTasks: one or more tasks in the batch are invalid",
+      );
+      return [];
+    }
+
     return tasksData.map(([title, description, priority]) =>
       this.addTask(title, description, priority),
     );
   },
 
   removeTask(taskId) {
+    // Added the type/shape validation as per feedback: taskId must resolve to a real number
+    if (
+      taskId === undefined ||
+      taskId === null ||
+      Number.isNaN(Number(taskId))
+    ) {
+      console.error("Invalid tasked id passed to removeTask");
+      return false;
+    }
+
     // First I find all the ids I need to remove
     const idsToRemove = this.tasks
       .filter(
@@ -128,12 +177,26 @@ export const TaskManager = {
       .map((task) => task.id);
 
     // loop over the tasks array and remove the matching tasks in place, preserving the array reference
-    for (let i = this.tasks.length - 1; i >= 0; i--) {
-      if (idsToRemove.includes(this.tasks[i].id)) {
-        this.tasks.splice(i, 1);
-      }
-    }
+    idsToRemove.forEach((id) => {
+      const index = this.tasks.findIndex((task) => task.id === id);
+      if (index !== -1) this.tasks.splice(index, 1);
+    });
     saveToStorage(this.tasks);
+    return true;
+  },
+
+  removeMultipleTasks(...taskIds) {
+    return taskIds.map((id) => this.removeTask(id));
+  },
+  toggleTaskCompletion(taskId) {
+    const task = this.tasks.find((task) => task.id === Number(taskId));
+    if (!task) {
+      console.error(`toggleTaskCompletion: no task found for id ${taskId}`);
+      return false;
+    }
+    task.toggleCompletion();
+    saveToStorage(this.tasks);
+    return true;
   },
 
   updateTaskPriority(taskId, newPriority) {
@@ -162,6 +225,11 @@ export const TaskManager = {
     const completedList = this.tasks.filter((task) => task.completed === true);
     return completedList.length;
   },
+  /**
+   * Recursively counts completed tasks starting at the given index.
+   * @param {number} [index=0] - The index to start counting from.
+   * @returns {number} The count of completed tasks from index to the end.
+   */
   countCompletedTasks(index = 0) {
     // Added base case check
     if (index === this.tasks.length) return 0;
@@ -183,11 +251,14 @@ export const TaskManager = {
       return [...this.tasks]; // spread to not mutate the original array
     }
 
-    return this.tasks.filter((task) =>
-      task.title.toLowerCase().includes(filterby.toLowerCase()),
-    );
+    return this.tasks.filter(createSearchMatch(filterby));
   },
 
+  /**
+   * Filters the task list by priority or completion status.
+   * @param {string} filterby - One of "all" | "done" | "not-done" | "low" | "medium" | "high".
+   * @returns {Array<Task>} A new filtered array.
+   */
   getFilteredTasks(filterby) {
     // Return the array as is if "all" is selected
     if (!filterby || filterby === "all") {
@@ -217,8 +288,17 @@ export const TaskManager = {
     const [topTask] = sorted;
     return topTask;
   },
-
+  /**
+   * Returns a sorted copy of the given tasks array without mutating it.
+   * @param {Array<Task>} tasks - Tasks to sort.
+   * @param {string} sortBy - One of "order-added" | "high" | "low" | "done" | "not-done".
+   * @returns {Array<Task>} A new sorted array.
+   */
   sortTasks(tasks, sortBy) {
+    if (!Array.isArray(tasks)) {
+      console.error("sortTasks: expected an array of tasks");
+      return [];
+    }
     // Make a copy first because sort mutates the original array
     const sorted = [...tasks];
 
@@ -255,15 +335,21 @@ export const TaskManager = {
   },
 
   addSubtask(title, description, priority, parentId) {
-    const parentTask = this.tasks.find((task) => task.id === Number(parentId));
-    if (!parentTask) {
-      console.log("Parent task not found");
+    //Added type/shape validation to match addTask's guards as per the feedback recieved
+    if (typeof title !== "string" || title.trim() === "") {
+      console.error("Subtask title is required and must be text");
+      return null;
+    }
+    if (!priorities[priority]) {
+      console.error(
+        `The ${priority} is invalid, It must be either low, medium or high`,
+      );
       return null;
     }
 
-    if (!title.trim()) {
-      console.log("No title added");
-
+    const parentTask = this.tasks.find((task) => task.id === Number(parentId));
+    if (!parentTask) {
+      console.error(`addSubtask: no parent task found for id ${parentId}`);
       return null;
     }
 
